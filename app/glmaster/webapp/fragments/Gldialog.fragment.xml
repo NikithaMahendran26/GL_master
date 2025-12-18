@@ -1,0 +1,204 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form">
+    <Dialog
+        id="dlgGLAccount"
+        title="Create GL Account"
+        contentWidth="100%"
+        contentHeight="100%"
+        resizable="true"
+        draggable="true"
+        afterClose="onGLDialogAfterClose">
+        <content>
+            <IconTabBar
+                id="glTabBar"
+                class="sapUiResponsiveContentPadding"
+                expandable="false">
+                <items>
+                    <IconTabFilter
+                        id="tabInitial"
+                        text="Initial"
+                        icon="sap-icon://add-document">
+                        <f:SimpleForm
+                            id="sfInitial"
+                            editable="true"
+                            layout="ResponsiveGridLayout"
+                            labelSpanXL="4"
+                            labelSpanL="3"
+                            labelSpanM="12"
+                            labelSpanS="12"
+                            adjustLabelSpan="false"
+                            emptySpanXL="0"
+                            emptySpanL="0"
+                            emptySpanM="0"
+                            emptySpanS="0"
+                            columnsXL="2"
+                            columnsL="2"
+                            columnsM="1"
+                            singleContainerFullSize="false">
+                            <f:content>
+                                <Label text="GL Account"/>
+                                <Input id="inpGLAccount"
+                                       value="{GLModel>/GLAccount}"/>
+
+                                <Label text="Company Code"/>
+                                <Input id="inpCompanyCode"
+                                       value="{GLModel>/CompanyCode}"/>
+                            </f:content>
+                        </f:SimpleForm>
+                    </IconTabFilter>
+                    <IconTabFilter
+                        id="tabTypeDesc"
+                        text="Type / Description"
+                        icon="sap-icon://edit">
+
+                        <f:SimpleForm
+                            id="sfTypeDesc"
+                            editable="true"
+                            layout="ResponsiveGridLayout"
+                            labelSpanXL="4"
+                            labelSpanL="3"
+                            labelSpanM="12"
+                            labelSpanS="12"
+                            adjustLabelSpan="false"
+                            emptySpanXL="0"
+                            emptySpanL="0"
+                            emptySpanM="0"
+                            emptySpanS="0"
+                            columnsXL="2"
+                            columnsL="2"
+                            columnsM="1"
+                            singleContainerFullSize="false">
+
+                            <f:content>
+                                <Label text="GL Account Type"/>
+                                <Input id="inpGLType"
+                                       value="{GLModel>/GLAccountType}"/>
+
+                                <Label text="Account Group"/>
+                                <Input id="inpAccGroup"
+                                       value="{GLModel>/AccountGroup}"/>
+
+                                <Label text="Short Text"/>
+                                <Input id="inpShortText"
+                                       value="{GLModel>/ShortText}"/>
+
+                                <Label text="GL Account Long Text"/>
+                                <Input id="inpLongText"
+                                       value="{GLModel>/LongText}"/>
+                            </f:content>
+                        </f:SimpleForm>
+                    </IconTabFilter>
+                    <IconTabFilter
+                        id="tabControlData"
+                        text="Control Data"
+                        icon="sap-icon://settings">
+                        <f:SimpleForm
+                            id="sfControlData"
+                            editable="true"
+                            layout="ResponsiveGridLayout"
+                            labelSpanXL="4"
+                            labelSpanL="3"
+                            labelSpanM="12"
+                            labelSpanS="12"
+                            adjustLabelSpan="false"
+                            emptySpanXL="0"
+                            emptySpanL="0"
+                            emptySpanM="0"
+                            emptySpanS="0"
+                            columnsXL="2"
+                            columnsL="2"
+                            columnsM="1"
+                            singleContainerFullSize="false">
+                            <f:content>
+                                <Label text="Account Currency"/>
+                                <Input id="inpCurrency"
+                                       value="{GLModel>/AccountCurrency}"/>
+
+                                <Label text="Balance in Local Currency Only"/>
+                                <CheckBox id="chkLocalCurrencyOnly"
+                                          selected="{GLModel>/LocalCurrencyOnly}"/>
+
+                                <Label text="Tax Category"/>
+                                <Input id="inpTaxCategory"
+                                       value="{GLModel>/TaxCategory}"/>
+
+                                <Label text="Posting Without Tax Allowed"/>
+                                <CheckBox id="chkPostingWithoutTax"
+                                          selected="{GLModel>/PostingWithoutTax}"/>
+
+                                <Label text="Reconciliation Account"/>
+                                <CheckBox id="chkReconciliation"
+                                          selected="{GLModel>/ReconciliationAccount}"/>
+
+                                <Label text="Open Item Management"/>
+                                <CheckBox id="chkOpenItem"
+                                          selected="{GLModel>/OpenItemManagement}"/>
+
+                                <Label text="Sort Key"/>
+                                <Input id="inpSortKey"
+                                       value="{GLModel>/SortKey}"/>
+                            </f:content>
+                        </f:SimpleForm>
+                    </IconTabFilter>
+                    <IconTabFilter
+                        id="tabCreateBank"
+                        text="Create / Bank / Interest"
+                        icon="sap-icon://money-bills">
+                        <f:SimpleForm
+                            id="sfCreateBank"
+                            editable="true"
+                            layout="ResponsiveGridLayout"
+                            labelSpanXL="4"
+                            labelSpanL="3"
+                            labelSpanM="12"
+                            labelSpanS="12"
+                            adjustLabelSpan="false"
+                            emptySpanXL="0"
+                            emptySpanL="0"
+                            emptySpanM="0"
+                            emptySpanS="0"
+                            columnsXL="2"
+                            columnsL="2"
+                            columnsM="1"
+                            singleContainerFullSize="false">
+                            <f:content>
+                                <Label text="Field Status Group"/>
+                                <Input id="inpFieldStatus"
+                                       value="{GLModel>/FieldStatusGroup}"/>
+
+                                <Label text="Post Automatically Only"/>
+                                <CheckBox id="chkPostAutomatically"
+                                          selected="{GLModel>/PostAutomatically}"/>
+
+                                <Label text="Relevant to Cash Flow"/>
+                                <CheckBox id="chkCashFlow"
+                                          selected="{GLModel>/CashFlowRelevant}"/>
+
+                                <Label text="House Bank"/>
+                                <Input id="inpHouseBank"
+                                       value="{GLModel>/HouseBank}"/>
+
+                                <Label text="Account ID"/>
+                                <Input id="inpAccountId"
+                                       value="{GLModel>/AccountID}"/>
+                            </f:content>
+                        </f:SimpleForm>
+                    </IconTabFilter>
+                </items>
+            </IconTabBar>
+        </content>
+        <buttons>
+            <Button
+                id="btnSaveGL"
+                text="Save"
+                type="Emphasized"
+                press="onSaveGL"/>
+            <Button
+                id="btnCancelGL"
+                text="Cancel"
+                press="onCancelGL"/>
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>

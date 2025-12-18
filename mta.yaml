@@ -1,0 +1,143 @@
+_schema-version: 3.3.0
+ID: MDG-GL
+description: A simple CAP project.
+version: 1.0.0
+modules:
+- name: MDG-GL-srv
+  type: nodejs
+  path: gen/srv
+  requires:
+  - name: MDG-GL-auth
+  - name: MDG-GL-db
+  provides:
+  - name: srv-api
+    properties:
+      srv-url: ${default-url}
+  parameters:
+    buildpack: nodejs_buildpack
+    instances: 1
+  build-parameters:
+    builder: npm-ci
+- name: MDG-GL-db-deployer
+  type: hdb
+  path: gen/db
+  requires:
+  - name: MDG-GL-db
+  parameters:
+    buildpack: nodejs_buildpack
+- name: MDG-GL-destination-content
+  type: com.sap.application.content
+  requires:
+  - name: MDG-GL-destination-service
+    parameters:
+      content-target: true
+  - name: MDG-GL_html_repo_host
+    parameters:
+      service-key:
+        name: MDG-GL_html_repo_host-key
+  - name: MDG-GL-auth
+    parameters:
+      service-key:
+        name: MDG-GL-auth-key
+  parameters:
+    content:
+      subaccount:
+        destinations:
+        - Name: MDG_GL_MASTER_MDG_GL_html_repo_host
+          ServiceInstanceName: MDG-GL-html5-app-host-service
+          ServiceKeyName: MDG-GL_html_repo_host-key
+          sap.cloud.service: MDG_GL_MASTER
+        - Authentication: OAuth2UserTokenExchange
+          Name: MDG_GL_MASTER_MDG_GL_auth
+          ServiceInstanceName: MDG-GL-auth
+          ServiceKeyName: MDG-GL-auth-key
+          sap.cloud.service: MDG_GL_MASTER
+        existing_destinations_policy: ignore
+  build-parameters:
+    no-source: true
+- name: MDG-GL-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: MDG-GL_html_repo_host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - glmaster.zip
+      name: glmaster
+      target-path: resources/
+    - artifacts:
+      - workflowuimodule.zip
+      name: workflowuimodule
+      target-path: resources/
+- name: glmaster
+  type: html5
+  path: app/glmaster
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: workflowuimodule
+  type: html5
+  path: workflow-ui-module
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+resources:
+- name: MDG-GL-auth
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      tenant-mode: dedicated
+      xsappname: MDG-GL-${org}-${space}
+    path: ./xs-security.json
+    service: xsuaa
+    service-plan: application
+- name: MDG-GL-db
+  type: com.sap.xs.hdi-container
+  parameters:
+    service: hana
+    service-plan: hdi-shared
+- name: MDG-GL-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      init_data:
+        subaccount:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          existing_destinations_policy: update
+      version: 1.0.0
+    service: destination
+    service-name: MDG-GL-destination-service
+    service-plan: lite
+- name: MDG-GL_html_repo_host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: MDG-GL-html5-app-host-service
+    service-plan: app-host
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npm ci
+    - npx cds build --production
