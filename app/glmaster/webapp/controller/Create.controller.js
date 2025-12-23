@@ -1,9 +1,8 @@
-sap.ui.define(
-    [
-        "sap/ui/core/mvc/Controller",
-        "sap/ui/model/json/JSONModel",
+sap.ui.define([
+    "sap/ui/core/mvc/Controller",
+    "sap/ui/model/json/JSONModel",
         "sap/ui/core/format/DateFormat",
-        "sap/m/MessageBox",
+    "sap/m/MessageBox",
         "sap/m/MessageToast",
         "sap/ui/core/Fragment",
         "sap/ui/model/FilterType",
@@ -11,31 +10,22 @@ sap.ui.define(
         "sap/ui/model/Filter"
     ],
     function (Controller, JSONModel, DateFormat, MessageBox, MessageToast, Fragment, FilterType, FilterOperator, Filter) {
-        "use strict";
+    "use strict";
 
         return Controller.extend(
             "glmaster.controller.Create",
             {
                 onInit: function () {
-                    this.i18n = this.getOwnerComponent().getModel("i18n").getResourceBundle();
-
-                    //comment model
-                    var oComments = new JSONModel();
-                    var aComments = [];
-                    oComments.setData(aComments);
-                    this.getOwnerComponent().setModel(oComments, "commentModel");
-
-                    var oRouter = this.getOwnerComponent().getRouter();
-                    oRouter.getRoute("Create").attachPatternMatched(this.onEntry, this);
-                    //oRouter.getRoute("Change").attachPatternMatched(this.onEntry, this);
-                    // oRouter.getRoute("extendRoute").attachPatternMatched(this.onEntry, this);
-                    // oRouter.getRoute("deleteRoute").attachPatternMatched(this.onEntry, this);
-                    this.logonLanguage = sap.ui.getCore().getConfiguration().getLanguage().toUpperCase();
-                    //this.getOwnerComponent().busyDialog.close();
-                    //   let exclmodel = new JSONModel(sap.ui.require.toUrl('com/deloitte/asset/mdg/srv/create/model/ExcelTemplate.json'));
-                    //   this.getView().setModel(exclmodel, "MulExclTemplate"); 
-
+                    this._oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
+                    this.getView().setModel(new JSONModel({
+                        GLCollection: []
+                    }), "glModel");
+                    this.getView().setModel(new JSONModel({
+                        messagesLength: 0,
+                        messages: []
+                    }), "GLMessageModel");
                 },
+
                 navBack: function () {
                     var that = this;
 
@@ -57,7 +47,7 @@ sap.ui.define(
                 },
                 onNavBack: function(){
                     this.getOwnerComponent().getRouter().navTo("RouteOverview");
-                },
+        },
                 onEntry: function (oEvent) {
                     // Gets route name and route arguments
                     let routeName = oEvent.getParameter("name");
@@ -127,55 +117,29 @@ sap.ui.define(
                     this.getView().getModel("serviceModel").refresh(true);
                 },
 
-                getServiceObject: function () {
-                    let objService = {
-                        ServiceType: "",
-                        ServiceTypeText: "",
-                        ServiceTypeKeyText: "",
-                        ServiceTypeSuggestionItems: [],
-                        Division: "",
-                        ServiceCategory: "",
-                        BaseUnitOfMeasure: "",
-                        BaseUnitOfMeasureText: "",
-                        BaseUnitOfMeasureKeyText: "",
-                        BaseUnitOfMeasureSuggestionItems: [],
-                        ServiceGroup: "",
-                        ServiceGroupText: "",
-                        ServiceGroupKeyText: "",
-                        ServiceGroupSuggestionItems: [],
-                        LongText: '',
-                        ServiceDescriptions: [{
-                            ActivityNumber: "",
-                            Description: ""
-                        }],
-                        UPC: "",
-                        EANCategory: "",
-                        EANCategoryText: "",
-                        EANCategoryKeyText: "",
-                        EANCategorySuggestionItems: [],
-                        ShortTextAllowed: false,
-                        ValuationClass: "",
-                        TaxIndicator: "",
-                        Formula: "",
-                        Graphic: "",
-                        SSC: "",
-                        HierarchyServiceNumber: "",
-                        Wagetype: "",
-                        PurchasingStatus: "",
-                        ValidityDate: "",
-                        Numberator: "",
-                        Denominator: "",
-                        SubContractorGroup: "",
-                        CoastingModel: "",
-                        UnitOfWork: "",
-                        TaxTraiffCode: "",
-                        Edition: ""
-
-
+                getGLObject: function () {
+                    return {
+                        GLAccount: "",
+                        CompanyCode: "",
+                        GLAccountType: "",
+                        AccountGroup: "",
+                        ShortText: "",
+                        LongText: "",
+                        AccountCurrency: "",
+                        LocalCurrencyOnly: false,
+                        TaxCategory: "",
+                        PostingWithoutTax: false,
+                        ReconciliationAccount: false,
+                        OpenItemManagement: false,
+                        SortKey: "",
+                        FieldStatusGroup: "",
+                        PostAutomatically: false,
+                        CashFlowRelevant: false,
+                        HouseBank: "",
+                        AccountID: ""
                     };
-
-                    return objService;
                 },
+
                 createServiceRequestModel: function (oView, logonLanguage) {
                     let objService = this.getServiceObject(logonLanguage);
                     let oModel = new JSONModel(objService);
@@ -201,7 +165,7 @@ sap.ui.define(
                     this.byId("btnedit").setEnabled(blEnabled);
 
                 },
-                deleteObj: function () {
+        deleteObj: function () {
                     var oSelectedItem = this.byId("srvTable").getSelectedItem();
 
                     if (oSelectedItem) {
@@ -231,16 +195,37 @@ sap.ui.define(
                     else {
                         MessageBox.information("Please select the record !")
                     }
+        },
+
+                onAddNew: function () {
+                    this._mode = "A";
+
+                    this.getView().setModel(
+                        new JSONModel(this.getGLObject()),
+                        "GLRequestModel"
+                    );
+
+                    this.openGLDialog("Add");
                 },
-                onAddNew: function (oEvent) {
-                    this._mode = "A"; // Add
-                    this.createServiceRequestModel(this.getView(), this.logonLanguage);
-                    this.displayDialog("Add");
+
+                editObj: function () {
+                    let oItem = this.byId("srvTable").getSelectedItem();
+                    if (!oItem) {
+                        MessageBox.information("Please select a record");
+                        return;
+                    }
+
+                    this._mode = "E";
+                    this._editPath = oItem.getBindingContext("glModel").getPath();
+
+                    let oData = JSON.parse(JSON.stringify(
+                        oItem.getBindingContext("glModel").getObject()
+                    ));
+
+                    this.getView().setModel(new JSONModel(oData), "GLRequestModel");
+                    this.openGLDialog("Edit");
                 },
-                editObj: function (oEvent) {
-                    this._mode = "E"; // Add
-                    this.displayDialog("Edit");
-                },
+
                 displayDialog: function (viewType) {
                     //this.getOwnerComponent().busyDialog.open();
 
@@ -283,6 +268,21 @@ sap.ui.define(
                     });
 
                 },
+                openGLDialog: function (mode) {
+                    if (!this._oGLDialog) {
+                        this._oGLDialog = Fragment.load({
+                            name: "glmaster.fragments.Gldialog",
+                            controller: this
+                        });
+                    }
+
+                    this._oGLDialog.then(oDialog => {
+                        this.getView().addDependent(oDialog);
+                        oDialog.setTitle(mode + " GL Account");
+                        oDialog.open();
+                    });
+                },
+
                 updateGLUIFields: function (viewType) {
 
                     let requestType = this.getView().getModel("serviceModel").getProperty("/RequestType");
@@ -322,16 +322,9 @@ sap.ui.define(
                 },
 
                 cancelService: function () {
-                    this._ServiceObject.then((oDialog) => {
-                        if (this.attribFieldIDs) {
-                            this.attribFieldIDs.forEach(id => {
-                                this.byId(id).destroy()
-                            });
-                            this.attribFieldIDs = [];
-                        }
-                        oDialog.close()
-                    });
+                    this._oGLDialog.then(oDialog => oDialog.close());
                 },
+
                 validateInputSuggestionField: function (oData, section, ctrl, propValue) {
                     let oEntry = {},
                         fieldKey = ctrl?.data("i18nFieldKey"),
@@ -365,95 +358,54 @@ sap.ui.define(
                 },
 
 
-                validateMaterialFrag: async function () {
-                    let ctrl,
-                        propValue = "",
-                        serviceRequestModel = this.getView().getModel("ServiceRequestModel"),
-                        oData = {
-                            messagesLength: 0,
-                            messages: []
-                        };
+                validateGLFrag: function () {
+                    let oData = { messages: [] };
+                    let oModel = this.getView().getModel("GLRequestModel");
 
-                    // Material Type
-                    ctrl = this.getView().byId("srvtype");
-                    propValue = serviceRequestModel.getProperty("/ServiceType");
-                    this.validateInputSuggestionField(oData, "Standard Service Category", ctrl, propValue);
+                    const aFields = [
+                        { id: "inpGLAccount", path: "/GLAccount", section: "Initial" },
+                        { id: "inpCompanyCode", path: "/CompanyCode", section: "Initial" },
+                        { id: "inpGLType", path: "/GLAccountType", section: "Type / Description" },
+                        { id: "inpAccGroup", path: "/AccountGroup", section: "Type / Description" }
+                    ];
 
-                    // Base Unit of Measure
-                    ctrl = this.getView().byId("uom");
-                    propValue = serviceRequestModel.getProperty("/BaseUnitOfMeasure");
-                    this.validateInputSuggestionField(oData, "General Data", ctrl, propValue);
+                    aFields.forEach(f => {
+                        let ctrl = this.byId(f.id);
+                        let val = oModel.getProperty(f.path);
+                        this.validateInputSuggestionField(oData, f.section, ctrl, val);
+                    });
 
-                    //Division
-                    ctrl = this.getView().byId("inptDivision");
-                    propValue = serviceRequestModel.getProperty("/Division");
-                    this.validateInputSuggestionField(oData, "Basic Data", ctrl, propValue);
-
-
-                    // Material Group
-                    ctrl = this.getView().byId("srvgrp");
-                    propValue = serviceRequestModel.getProperty("/ServiceGroup");
-                    this.validateInputSuggestionField(oData, "Basic Data", ctrl, propValue);
-
-                    this.getView().getModel("ServiceMessageModel").setProperty("/", oData);
-
-                    let mPopover = this.getView().byId("bMsgRecEditService").getDependents()[0];
-                    let bMsgRecEditService = this.getView().byId("bMsgRecEditService");
+                    this.getView().getModel("GLMessageModel").setData(oData);
 
                     if (oData.messages.length > 0) {
-                        bMsgRecEditService.setType("Reject");
-                        if (!mPopover.isOpen()) {
-                            mPopover.openBy(bMsgRecEditService);
-                        }
+                        this.byId("bMsgRecEditService").setType("Reject");
                         return false;
-                    } else {
-                        bMsgRecEditService.setType("Default");
-                        return true;
                     }
+                    //this.byId("bMsgRecEditService").setType("Default");
+                    return true;
                 },
-                submitsrv: async function () {
-                    // this.getOwnerComponent().busyDialog.open();
-
-                    let bValidate = await this.validateMaterialFrag();
-                    console.log(bValidate);
-                    if (bValidate) {
-                        let oTable = this.byId("srvTable");
-                        let oMatModel = this.getView().getModel("serviceModel");
-
-                        let objService = Object.assign({}, this.getView().getModel("ServiceRequestModel").getData());
 
 
-                        if (this._mode === "A") {
-                            var oCollection = oMatModel.getProperty("/ServiceCollection");
-                            var hIndex = 0;
-                            if (oCollection.length > 0) {
-                                hIndex = oCollection[oCollection.length - 1].ItemId;
-                            }
-                            objService.ItemId = (parseInt(hIndex) + 1);
+                submitsrv: function () {
+                    if (!this.validateGLFrag()) return;
 
-                            oMatModel.getProperty("/ServiceCollection").push(objService);
+                    let oGLModel = this.getView().getModel("glModel");
+                    let aData = oGLModel.getProperty("/GLCollection");
 
-                        } else if (this._mode === "E") {
-                            var oExistingObj = oMatModel.getProperty(this._editServicePath);
+                    let oPayload = JSON.parse(JSON.stringify(
+                        this.getView().getModel("GLRequestModel").getData()
+                    ));
 
-                            if (oExistingObj) {
-                                Object.assign(oExistingObj, objService);
-                            }
-
-                        }
-
-                        oMatModel.refresh();
-
-                        oTable.removeSelections(true);
-                        this.byId("btndele").setEnabled(false);
-                        this.byId("btnedit").setEnabled(false);
-
-                        this._ServiceObject.then(function (oDialog) { oDialog.close() });
-                        this.getOwnerComponent().busyDialog.close();
+                    if (this._mode === "A") {
+                        aData.push(oPayload);
                     } else {
-                        this.getOwnerComponent().busyDialog.close();
+                        Object.assign(oGLModel.getProperty(this._editPath), oPayload);
                     }
+
+                    oGLModel.refresh(true);
+                    this.cancelService();
                 },
+
 
                 createWFModel: function () {
                     this.getView().setModel(new JSONModel({

@@ -40,11 +40,11 @@
                             <f:content>
                                 <Label text="GL Account"/>
                                 <Input id="inpGLAccount"
-                                       value="{GLModel>/GLAccount}"/>
+                                       value="{GLRequestModel>/GLAccount}"/>
 
                                 <Label text="Company Code"/>
                                 <Input id="inpCompanyCode"
-                                       value="{GLModel>/CompanyCode}"/>
+                                       value="{GLRequestModel>/CompanyCode}"/>
                             </f:content>
                         </f:SimpleForm>
                     </IconTabFilter>
@@ -74,19 +74,19 @@
                             <f:content>
                                 <Label text="GL Account Type"/>
                                 <Input id="inpGLType"
-                                       value="{GLModel>/GLAccountType}"/>
+                                       value="{GLRequestModel>/GLAccountType}"/>
 
                                 <Label text="Account Group"/>
                                 <Input id="inpAccGroup"
-                                       value="{GLModel>/AccountGroup}"/>
+                                       value="{GLRequestModel>/AccountGroup}"/>
 
                                 <Label text="Short Text"/>
                                 <Input id="inpShortText"
-                                       value="{GLModel>/ShortText}"/>
+                                       value="{GLRequestModel>/ShortText}"/>
 
                                 <Label text="GL Account Long Text"/>
                                 <Input id="inpLongText"
-                                       value="{GLModel>/LongText}"/>
+                                       value="{GLRequestModel>/LongText}"/>
                             </f:content>
                         </f:SimpleForm>
                     </IconTabFilter>
@@ -114,31 +114,31 @@
                             <f:content>
                                 <Label text="Account Currency"/>
                                 <Input id="inpCurrency"
-                                       value="{GLModel>/AccountCurrency}"/>
+                                       value="{GLRequestModel>/AccountCurrency}"/>
 
                                 <Label text="Balance in Local Currency Only"/>
                                 <CheckBox id="chkLocalCurrencyOnly"
-                                          selected="{GLModel>/LocalCurrencyOnly}"/>
+                                          selected="{GLRequestModel>/LocalCurrencyOnly}"/>
 
                                 <Label text="Tax Category"/>
                                 <Input id="inpTaxCategory"
-                                       value="{GLModel>/TaxCategory}"/>
+                                       value="{GLRequestModel>/TaxCategory}"/>
 
                                 <Label text="Posting Without Tax Allowed"/>
                                 <CheckBox id="chkPostingWithoutTax"
-                                          selected="{GLModel>/PostingWithoutTax}"/>
+                                          selected="{GLRequestModel>/PostingWithoutTax}"/>
 
                                 <Label text="Reconciliation Account"/>
                                 <CheckBox id="chkReconciliation"
-                                          selected="{GLModel>/ReconciliationAccount}"/>
+                                          selected="{GLRequestModel>/ReconciliationAccount}"/>
 
                                 <Label text="Open Item Management"/>
                                 <CheckBox id="chkOpenItem"
-                                          selected="{GLModel>/OpenItemManagement}"/>
+                                          selected="{GLRequestModel>/OpenItemManagement}"/>
 
                                 <Label text="Sort Key"/>
                                 <Input id="inpSortKey"
-                                       value="{GLModel>/SortKey}"/>
+                                       value="{GLRequestModel>/SortKey}"/>
                             </f:content>
                         </f:SimpleForm>
                     </IconTabFilter>
@@ -166,39 +166,62 @@
                             <f:content>
                                 <Label text="Field Status Group"/>
                                 <Input id="inpFieldStatus"
-                                       value="{GLModel>/FieldStatusGroup}"/>
+                                       value="{GLRequestModel>/FieldStatusGroup}"/>
 
                                 <Label text="Post Automatically Only"/>
                                 <CheckBox id="chkPostAutomatically"
-                                          selected="{GLModel>/PostAutomatically}"/>
+                                          selected="{GLRequestModel>/PostAutomatically}"/>
 
                                 <Label text="Relevant to Cash Flow"/>
                                 <CheckBox id="chkCashFlow"
-                                          selected="{GLModel>/CashFlowRelevant}"/>
+                                          selected="{GLRequestModel>/CashFlowRelevant}"/>
 
                                 <Label text="House Bank"/>
                                 <Input id="inpHouseBank"
-                                       value="{GLModel>/HouseBank}"/>
+                                       value="{GLRequestModel>/HouseBank}"/>
 
                                 <Label text="Account ID"/>
                                 <Input id="inpAccountId"
-                                       value="{GLModel>/AccountID}"/>
+                                       value="{GLRequestModel>/AccountID}"/>
                             </f:content>
                         </f:SimpleForm>
                     </IconTabFilter>
                 </items>
             </IconTabBar>
         </content>
-        <buttons>
+        <footer>
+            <OverflowToolbar>
+                <Button id="bMsgRecEditService" icon="sap-icon://message-popup"
+                    text="{= ${GLMessageModel>/messages}.length}" press="handleServiceMessagePopoverPress">
+                    <dependents>
+                        <MessagePopover id="mpServiceMessage" items="{GLMessageModel>/messages}">
+                            <MessageItem type="{GLMessageModel>type}"
+                                title="{GLMessageModel>title}"
+                                activeTitle="{GLMessageModel>active}"
+                                description="{GLMessageModel>description}"
+                                subtitle="{GLMessageModel>subtitle}"
+                                counter="{GLMessageModel>counter}" />
+                        </MessagePopover>
+                    </dependents>
+                </Button>
+
+                <ToolbarSpacer />
+
+                <!-- <Button id="bduplcheck" text="Duplicate Check" press="OriginalDuplicateCheck" type="Emphasized" /> -->
+                <Button id="bSubVal" text="Validate &amp; Submit" press="submitsrv" type="Emphasized" />
+                <Button id="bCancel" text="Cancel" press="cancelService" />
+            </OverflowToolbar>
+        </footer>
+        <!-- <buttons>
             <Button
                 id="btnSaveGL"
                 text="Save"
                 type="Emphasized"
-                press="onSaveGL"/>
+                press="submitsrv"/>
             <Button
                 id="btnCancelGL"
                 text="Cancel"
-                press="onCancelGL"/>
-        </buttons>
+                press="cancelService"/>
+        </buttons> -->
     </Dialog>
 </core:FragmentDefinition>
