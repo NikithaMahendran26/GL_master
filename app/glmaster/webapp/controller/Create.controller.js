@@ -16,6 +16,23 @@ sap.ui.define([
             "glmaster.controller.Create",
             {
                 onInit: function () {
+                    this.i18n = this.getOwnerComponent().getModel("i18n").getResourceBundle();
+
+                    //comment model
+                    var oComments = new JSONModel();
+                    var aComments = [];
+                    oComments.setData(aComments);
+                    this.getOwnerComponent().setModel(oComments, "commentModel");
+
+                    var oRouter = this.getOwnerComponent().getRouter();
+                    oRouter.getRoute("Create").attachPatternMatched(this.onEntry, this);
+                    //oRouter.getRoute("Change").attachPatternMatched(this.onEntry, this);
+                    // oRouter.getRoute("extendRoute").attachPatternMatched(this.onEntry, this);
+                    // oRouter.getRoute("deleteRoute").attachPatternMatched(this.onEntry, this);
+                    this.logonLanguage = sap.ui.getCore().getConfiguration().getLanguage().toUpperCase();
+                    //this.getOwnerComponent().busyDialog.close();
+                    //   let exclmodel = new JSONModel(sap.ui.require.toUrl('com/deloitte/asset/mdg/srv/create/model/ExcelTemplate.json'));
+                    //   this.getView().setModel(exclmodel, "MulExclTemplate"); 
                     this._oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
                     this.getView().setModel(new JSONModel({
                         GLCollection: []
