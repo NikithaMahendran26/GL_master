@@ -22,11 +22,11 @@
 		},
 		"dataSources": {
 			"mainService": {
-				"uri": "/odata/v4/zmdggl-master/",
+				"uri": "/odata/v2/zmdggl-master/",
 				"type": "OData",
 				"settings": {
 					"annotations": [],
-					"odataVersion": "4.0"
+					"odataVersion": "2.0"
 				}
 			}
 		},
@@ -83,7 +83,7 @@
 					]
 				}
 			},
-			"": {
+			"mainServiceModel": {
 				"dataSource": "mainService",
 				"preload": true,
 				"settings": {

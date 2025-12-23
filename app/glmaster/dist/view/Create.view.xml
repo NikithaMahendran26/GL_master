@@ -6,7 +6,7 @@
     <Page id="Create" title="{i18n>title}" showNavButton="true" navButtonPress="navBack" backgroundDesign="Solid">
         <content>
          <Panel headerText="Create Service Master Detail's   {glModel>/type}" expandable="true" expanded="true"  width="auto" class="sapUiResponsiveMargin">
-            <Table id="srvTable" inset="false" noDataText="No Data. Use 'Upload' or 'Add new' for adding records" selectionChange="onSelectionChange" alternateRowColors="false" mode="SingleSelectLeft"  items="{glModel>/ServiceCollection}">
+            <Table id="srvTable" inset="false" noDataText="No Data. Use 'Upload' or 'Add new' for adding records" selectionChange="onSelectionChange" alternateRowColors="false" mode="SingleSelectLeft"  items="{glModel>/GLCollection}">
                     <headerToolbar>
                         <OverflowToolbar width="100%">
                             <content>
@@ -23,25 +23,25 @@
                     </headerToolbar>
                     <columns>
                         <Column>
-                            <Text text="Service Type" />
+                            <Text text="GL Account" />
                         </Column>
                         <Column>
-                            <Text text="Service Description" />
+                            <Text text="Company Code" />
                         </Column>
                         <Column>
-                            <Text text="Base Unit Of Measure" />
+                            <Text text="GL Account Type" />
                         </Column>
                         <Column>
-                            <Text text="Service Group" />
+                            <Text text="Account Group" />
                         </Column>
                     </columns>
                     <items>
                         <ColumnListItem>
                             <cells>
-                                <Text text="{glModel>ServiceType}" />
-                                <Text text="{glModel>ServiceDescriptions/0/Description}" />
-                                <Text text="{glModel>BaseUnitOfMeasure}" />
-                                <Text text="{glModel>ServiceGroup}" />
+                                <Text text="{glModel>GLAccount}" />
+                                <Text text="{glModel>CompanyCode}" />
+                                <Text text="{glModel>GLAccountType}" />
+                                <Text text="{glModel>AccountGroup}" />
                             </cells>
                         </ColumnListItem>
                     </items>
@@ -61,7 +61,7 @@
             <OverflowToolbar>
                 <Button id="bMsg" icon="sap-icon://message-popup" press="handleMessagePopoverPress" text="{messageall>/messagesLength}" />
                 <ToolbarSpacer />
-                <Button text="Send for Approval" icon="sap-icon://paper-plane" type="Accept" press="initiateApprovalProcess" />
+                <Button text="Send for Approval" icon="sap-icon://paper-plane" type="Accept" press="generateRequestId" />
             </OverflowToolbar>
         </footer>
     </Page>

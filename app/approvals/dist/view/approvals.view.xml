@@ -1,0 +1,108 @@
+<mvc:View
+    controllerName="approvals.controller.approvals"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout">
+    <App id="app">
+        <pages>
+            <Page id="page" title="{i18n>title}">
+                <content>
+                    <l:HorizontalLayout id="layout1" />
+                    <Panel
+                        headerText="GL Master Items"
+                        expandable="true"
+                        expanded="true"
+                        width="auto"
+                        class="sapUiResponsiveMargin">
+                        <Table
+                            id="tablelist"
+                            inset="false"
+                            noDataText="No GL records available"
+                            selectionChange=".onSelectionChange"
+                            mode="SingleSelectLeft"
+                            items="{glModel>/GLCollection}">
+                            <headerToolbar>
+                                <OverflowToolbar>
+                                    <content>
+                                        <ToolbarSpacer />
+                                        <Button
+                                            id="changeLogBtn"
+                                            text="Change Log"
+                                            icon="sap-icon://notes"
+                                            enabled="false"
+                                            press="onChangeLogPressed" />
+                                        <Button
+                                            id="viewbtn"
+                                            text="View"
+                                            type="Emphasized"
+                                            icon="sap-icon://detail-view"
+                                            enabled="true"
+                                            press="onViewApproval" />
+                                        <Button
+                                            id="editbtn"
+                                            text="Edit"
+                                            type="Emphasized"
+                                            icon="sap-icon://edit"
+                                            enabled="false"
+                                            visible="false"
+                                            press="onEditGL" />
+                                    </content>
+                                </OverflowToolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column>
+                                    <Text text="GL Account" />
+                                </Column>
+                                <Column>
+                                    <Text text="Company Code" />
+                                </Column>
+                                <Column>
+                                    <Text text="GL Type" />
+                                </Column>
+                                <Column>
+                                    <Text text="Account Group" />
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <Text text="{glModel>GLAccount}" />
+                                        <Text text="{glModel>CompanyCode}" />
+                                        <Text text="{glModel>GLType}" />
+                                        <Text text="{glModel>AccountGroup}" />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+
+                        </Table>
+                    </Panel>
+                    <Panel
+                        id="idComments"
+                        expanded="true"
+                        expandable="true"
+                        headerText="Comments"
+                        width="auto"
+                        class="sapUiResponsiveMargin">
+                        <content>
+                            <FeedInput
+                                id="fIC"
+                                post=".onCommentPost"
+                                maxLength="100"
+                                placeholder="Add a comment (max 100 characters)"
+                                icon="sap-icon://comment" />
+                            <List
+                                id="flist"
+                                showSeparators="Inner"
+                                items="{commentModel>/}">
+                                <FeedListItem
+                                    sender="{commentModel>UserName}"
+                                    timestamp="{commentModel>Date}"
+                                    text="{commentModel>Text}" />
+                            </List>
+                        </content>
+                    </Panel>
+                </content>
+            </Page>
+        </pages>
+    </App>
+</mvc:View>

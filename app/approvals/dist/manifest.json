@@ -1,0 +1,223 @@
+{
+	"_version": "1.76.0",
+	"sap.app": {
+		"id": "approvals",
+		"type": "application",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			]
+		},
+		"applicationVersion": {
+			"version": "0.0.1"
+		},
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"resources": "resources.json",
+		"sourceTemplate": {
+			"id": "@sap/generator-fiori:basic",
+			"version": "1.20.0",
+			"toolsId": "d049ab33-4d55-4cb6-aeb9-1f237f36574e"
+		},
+		"dataSources": {
+			"mainService": {
+				"uri": "/odata/v2/zmdggl-master/",
+				"type": "OData",
+				"settings": {
+					"annotations": [],
+					"odataVersion": "2.0"
+				}
+			}
+		},
+		"crossNavigation": {
+			"inbounds": {
+				"approvals-approvals": {
+					"semanticObject": "approvals",
+					"action": "approvals",
+					"title": "{{approvals-approvals.flpTitle}}",
+					"signature": {
+						"parameters": {},
+						"additionalParameters": "allowed"
+					}
+				}
+			}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "",
+			"favIcon": "",
+			"phone": "",
+			"phone@2": "",
+			"tablet": "",
+			"tablet@2": ""
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"flexEnabled": true,
+		"dependencies": {
+			"minUI5Version": "1.143.2",
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "approvals.i18n.i18n",
+					"supportedLocales": [
+						""
+					]
+				}
+			},
+			"": {
+				"dataSource": "mainService",
+				"preload": true,
+				"settings": {
+					"operationMode": "Server",
+					"autoExpandSelect": true,
+					"earlyRequests": true
+				}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"controlAggregation": "pages",
+				"controlId": "app",
+				"transition": "slide",
+				"type": "View",
+				"viewType": "XML",
+				"path": "approvals.view",
+				"async": true,
+				"viewPath": "approvals.view"
+			},
+			"routes": [
+				{
+					"name": "Routeapprovals",
+					"pattern": ":?query:",
+					"target": [
+						"Targetapprovals"
+					]
+				}
+			],
+			"targets": {
+				"Targetapprovals": {
+					"id": "approvals",
+					"name": "approvals"
+				}
+			}
+		},
+		"rootView": {
+			"viewName": "approvals.view.App",
+			"type": "XML",
+			"id": "App",
+			"async": true
+		},
+		"flexBundle": false
+	},
+	"sap.cloud": {
+		"public": true,
+		"service": "MDG_GL_MASTER"
+	},
+	"sap.bpa.task": {
+		"_version": "1.1.0",
+		"outcomes": [
+			{
+				"id": "approve",
+				"label": "Approve",
+				"type": "positive"
+			},
+			{
+				"id": "reject",
+				"label": "Reject",
+				"type": "negative"
+			},
+			{
+				"id": "rework",
+				"label": "Re-Work",
+				"type": "neutral"
+			}
+		],
+		"inputs": {
+			"$schema": "http://json-schema.org/draft-07/schema",
+			"title": "input",
+			"type": "object",
+			"required": []
+		},
+		"outputs": {
+			"$schema": "http://json-schema.org/draft-07/schema",
+			"title": "output",
+			"type": "object",
+			"required": [],
+			"properties": {
+				"Comments": {
+					"type": "array",
+					"items": {
+						"type": "object"
+					},
+					"default": [],
+					"title": "comment",
+					"description": "Approver's Response"
+				},
+				"ApproverId": {
+					"type": "string",
+					"title": "approverid",
+					"description": "Approver's ID"
+				},
+				"Approve": {
+					"type": "string",
+					"title": "Approve",
+					"description": "Approve"
+				},
+				"Reject": {
+					"type": "string",
+					"title": "Reject",
+					"description": "Reject"
+				}
+			},
+			"TaskInfo": {
+				"type": "object",
+				"description": "Task Instance details",
+				"properties": {
+					"ID": {
+						"type": "string",
+						"description": "Task Instance id",
+						"title": "Task Instance ID"
+					},
+					"Approver": {
+						"type": "string",
+						"description": "Approver completed the task",
+						"title": "Approver"
+					},
+					"Decision": {
+						"type": "string",
+						"description": "Approver Decision",
+						"title": "Decision"
+					}
+				}
+			}
+		},
+		"category": "approval"
+	}
+}

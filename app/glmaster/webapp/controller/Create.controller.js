@@ -17,8 +17,6 @@ sap.ui.define([
             {
                 onInit: function () {
                     this.i18n = this.getOwnerComponent().getModel("i18n").getResourceBundle();
-
-                    //comment model
                     var oComments = new JSONModel();
                     var aComments = [];
                     oComments.setData(aComments);
@@ -464,143 +462,138 @@ sap.ui.define([
 
                     return finalComments;
                 },
-                initiateApprovalProcess: async function () {
+                // initiateApprovalProcess: async function () {
+                //     try {
+                //         if (!this._oBusyDialog) {
+                //             this._oBusyDialog = new sap.m.BusyDialog({ text: "Initiating approval process..." });
+                //         }
+                //         this._oBusyDialog.open();
+
+                //         // Ensure mandatory comments are provided
+                //         let commentModel = this.getView().getModel("commentModel");
+                //         let comments = commentModel.getData();
+                //         if (comments.length === 0) {
+                //             this._oBusyDialog.close();
+                //             MessageBox.information("Comments are mandatory!");
+                //             return;
+                //         }
+
+                //         // Post data to generate Request ID
+                //         this._oBusyDialog.setText("Posting data...");
+                //         let reqID = await this.postData();
+                //         if (!reqID) throw new Error("Failed to generate Request ID.");
+
+                //         // Initiate workflow instance with the generated Request ID
+                //         this._oBusyDialog.setText("Starting workflow...");
+                //         let workflowSuccess = await this.startWorkflowInstance(reqID);
+                //         if (!workflowSuccess) throw new Error("Failed to initiate workflow.");
+
+                //         // Update backend with the workflow instance ID
+                //         this._oBusyDialog.setText("Updating workflow header...");
+                //         let workflowData = this.getView().getModel("workflowModel").getData();
+                //         let workflowInstanceId = workflowData.apiResponse.id;
+                //         await this.updateWorkflowHeader(reqID, workflowInstanceId);
+
+                //         // Close BusyDialog and show success message
+                //         this._oBusyDialog.close();
+                //         this.showSuccessMessage(reqID);
+
+                //     } catch (error) {
+                //         // Handle errors gracefully
+                //         if (this._oBusyDialog) {
+                //             this._oBusyDialog.close();
+                //         }
+                //         MessageBox.error(error.message || "An error occurred during the process.");
+                //         console.error("Error:", error);
+                //     }
+                // },
+                generateRequestId: async function () {
                     try {
                         if (!this._oBusyDialog) {
-                            this._oBusyDialog = new sap.m.BusyDialog({ text: "Initiating approval process..." });
+                            this._oBusyDialog = new sap.m.BusyDialog({ text: "Creating request..." });
                         }
                         this._oBusyDialog.open();
 
-                        // Ensure mandatory comments are provided
-                        let commentModel = this.getView().getModel("commentModel");
-                        let comments = commentModel.getData();
-                        if (comments.length === 0) {
+                        const glItems = this.getView().getModel("glModel").getProperty("/GLCollection");
+                        if (!glItems || glItems.length === 0) {
                             this._oBusyDialog.close();
-                            MessageBox.information("Comments are mandatory!");
+                            MessageBox.information("Please add at least one GL record");
                             return;
                         }
 
-                        // Post data to generate Request ID
-                        this._oBusyDialog.setText("Posting data...");
-                        let reqID = await this.postData();
-                        if (!reqID) throw new Error("Failed to generate Request ID.");
-
-                        // Initiate workflow instance with the generated Request ID
-                        this._oBusyDialog.setText("Starting workflow...");
-                        let workflowSuccess = await this.startWorkflowInstance(reqID);
-                        if (!workflowSuccess) throw new Error("Failed to initiate workflow.");
-
-                        // Update backend with the workflow instance ID
-                        this._oBusyDialog.setText("Updating workflow header...");
-                        let workflowData = this.getView().getModel("workflowModel").getData();
-                        let workflowInstanceId = workflowData.apiResponse.id;
-                        await this.updateWorkflowHeader(reqID, workflowInstanceId);
-
-                        // Close BusyDialog and show success message
-                        this._oBusyDialog.close();
-                        this.showSuccessMessage(reqID);
-
-                    } catch (error) {
-                        // Handle errors gracefully
-                        if (this._oBusyDialog) {
-                            this._oBusyDialog.close();
+                        const reqID = await this.postData();
+                        if (!reqID) {
+                            throw new Error("Request ID not generated");
                         }
-                        MessageBox.error(error.message || "An error occurred during the process.");
-                        console.error("Error:", error);
+
+                        this._oBusyDialog.close();
+                        MessageBox.success("Request created successfully. Request ID: " + reqID);
+
+                    } catch (err) {
+                        this._oBusyDialog?.close();
+                        MessageBox.error(err?.message || "Error while creating request");
                     }
                 },
                 PayloadData: function () {
-                    let serviceModel = this.getView().getModel("serviceModel");
-                    let Comments = this.getComments();
-                    let requestType = serviceModel.getProperty("/RequestType");
-                    let serviceCollection = serviceModel.getProperty("/ServiceCollection");
+                    const glModel = this.getView().getModel("glModel");
+                    const glItems = glModel.getProperty("/GLCollection");
 
-                    var oData = {};
-                    var arrObj = {};
+                    const oData = {
+                        workflowStatus: "Draft",
+                        type: this.getView().getModel("serviceModel").getProperty("/RequestType"),
+                        glMasterItems: []   // MUST MATCH CDS COMPOSITION NAME
+                    };
 
-                    oData.workflowStatus = "In Approval";
-                    oData.type = requestType;
-                    oData.serviceMasterItems = [];
-                    // oData.CommentData = Comments;
-                    oData.requestId = "NEWREQUEST";
-                    for (let i = 0; i < serviceCollection?.length; i++) {
-                        const convert = (dateStr) => {
-                            if (dateStr == null) return "";
-                            if (dateStr == undefined) return "";
-                            if (dateStr && dateStr != null && JSON.stringify(dateStr) != "null") {
-                                const [dd, mm, yyyy] = dateStr.split("-");
-                                return `${mm}-${dd}-${yyyy}`;
-                            }
-                            return "";
-                        };
-                        arrObj = {};
-                        arrObj.ServiceType = serviceCollection[i].ServiceType;
-                        arrObj.ServiceCategory = serviceCollection[i].ServiceCategory;
-                        arrObj.BaseUnitOfMeasure = serviceCollection[i].BaseUnitOfMeasure;
-                        arrObj.ServiceGroup = serviceCollection[i].ServiceGroup;
-                        arrObj.Division = serviceCollection[i].Division;
-                        arrObj.LongText = serviceCollection[i].LongText;
-                        arrObj.UPC = serviceCollection[i].UPC;
-                        arrObj.EANCategory = serviceCollection[i].EANCategory;
-                        arrObj.ShortTextAllowed = serviceCollection[i].ShortTextAllowed;
-                        arrObj.ValuationClass = serviceCollection[i].ValuationClass;
-                        arrObj.TaxIndicator = serviceCollection[i].TaxIndicator;
-                        arrObj.Formula = serviceCollection[i].Formula;
-                        arrObj.Graphic = serviceCollection[i].Graphic;
-                        arrObj.SSC = serviceCollection[i].SSC;
-                        arrObj.HierarchyServiceNumber = serviceCollection[i].HierarchyServiceNumber;
-                        arrObj.Wagetype = serviceCollection[i].Wagetype;
-                        arrObj.PurchasingStatus = serviceCollection[i].PurchasingStatus;
-                        arrObj.ValidityDate = new Date(convert(serviceCollection[i].ValidityDate));
-                        arrObj.Numberator = serviceCollection[i].Numberator;
-                        arrObj.Denominator = serviceCollection[i].Denominator;
-                        arrObj.SubContractorGroup = serviceCollection[i].SubContractorGroup;
-                        arrObj.CoastingModel = serviceCollection[i].CoastingModel;
-                        arrObj.UnitOfWork = serviceCollection[i].UnitOfWork;
-                        arrObj.TaxTraiffCode = serviceCollection[i].TaxTraiffCode;
-                        arrObj.Edition = serviceCollection[i].Edition;
+                    glItems.forEach(item => {
 
-
-                        arrObj.ServiceDescriptions = [];
-
-                        for (let j = 0; j < serviceCollection[i]?.ServiceDescriptions?.length; j++) {
-                            let arrservice_description = {
-                                ActivityNumber: serviceCollection[i].ServiceDescriptions[j].ActivityNumber,
-                                Description: serviceCollection[i].ServiceDescriptions[j].Description
-                                // toBeDeleted: serviceCollection[i].ServiceDescriptions[j].ToBeDeleted,
-                                // isNew: serviceCollection[i].serviceDescriptions[j].IsNew
-                            }
-                            arrObj.ServiceDescriptions.push(arrservice_description);
+                        if (!item.GLAccount || !item.CompanyCode) {
+                            throw new Error("GL Account and Company Code are mandatory");
                         }
-                        oData.serviceMasterItems.push(arrObj);
 
-                    }
+                        oData.glMasterItems.push({
+                            GLAccount: item.GLAccount,
+                            CompanyCode: item.CompanyCode,
+                            GLAccountType: item.GLAccountType,
+                            AccountGroup: item.AccountGroup,
+                            ShortText: item.ShortText,
+                            GLAccountLongText: item.GLAccountLongText,
+                            AccountCurrency: item.AccountCurrency,
+                            LocalCurrencyOnly: !!item.LocalCurrencyOnly,
+                            PostingWithoutTax: !!item.PostingWithoutTax,
+                            ReconciliationAccount: item.ReconciliationAccount,
+                            OpenItemManagement: !!item.OpenItemManagement,
+                            SortKey: item.SortKey,
+                            FieldStatusGroup: item.FieldStatusGroup,
+                            PostAutomatically: !!item.PostAutomatically,
+                            CashFlowRelevant: !!item.CashFlowRelevant,
+                            HouseBank: item.HouseBank,
+                            AccountID: item.AccountID
+                        });
+                    });
 
-                    // if (requestType === "Change") {
-                    //     this.identifyChanges(that.changeservices, oData, this.ServiceModelData);
-                    // } 
-                    console.log(oData);
                     return oData;
                 },
                 postData: function () {
                     let that = this;
+
                     return new Promise((resolve, reject) => {
+
                         let payload = that.PayloadData();
-                        let model = that.getView().getModel("mainServiceModel");
-                        model.create("/ServiceMasterRequests", payload, {
+                        let oModel = that.getView().getModel("mainServiceModel");
+
+                        oModel.create("/GlMasterRequests", payload, {
                             success: function (data) {
-                                resolve(data.requestId);
+                                resolve(data.reqestId);   // Backend-generated Request ID
                             },
-                            error: function (response) {
-                                reject(response);
+                            error: function (oError) {
+                                reject(oError);
                             }
                         });
                     });
                 },
-
                 startWorkflowInstance: function (reqID) {
                     return new Promise((resolve, reject) => {
-                        let definitionId = "eu10.data-guardian-development-wvrdlvx6.servicemaster.serviceMaster";
+                        let definitionId = "eu10.btp-innovation-lab-s64t0r2h.glworfklow.gLProcess";
                         let commentModel = this.getView().getModel("commentModel");
                         let comments = commentModel.getData();
                         let initialContext = { reqno: reqID, Type: "Create", Comment: comments };
@@ -631,7 +624,7 @@ sap.ui.define([
 
                         let model = this.getView().getModel("mainServiceModel");
 
-                        model.update(`/ServiceMasterRequests('${reqID}')`, payload, {
+                        model.update(`/GlMasterRequests('${reqID}')`, payload, {
                             success: function () {
                                 resolve();
                             },

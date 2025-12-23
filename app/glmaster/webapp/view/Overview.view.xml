@@ -107,7 +107,7 @@
                 mode="SingleSelectLeft"
                 updateStarted="upstarted"
                 items="{
-                    path :'mainServiceModel>/ServiceMasterRequests',
+                    path :'mainServiceModel>/GlMasterRequests',
                     sorter:{path:'createdAt', descending:true}
                 }"
                 sticky="HeaderToolbar,ColumnHeaders"

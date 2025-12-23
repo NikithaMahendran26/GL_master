@@ -1,0 +1,23 @@
+{
+  "controller/App.controller.js": 1766494804572,
+  "model/models.js": 1766494804568,
+  "controller/approvals.controller.js": 1766500098824,
+  "i18n/i18n.properties": 1766494811488,
+  "manifest.json": 1766507504965,
+  "Component.js": 1766494804564,
+  "controller/App-dbg.controller.js": 1766494804572,
+  "controller/App.controller.js.map": 1766507546315,
+  "controller/approvals-dbg.controller.js": 1766500098824,
+  "controller/approvals.controller.js.map": 1766507546318,
+  "model/models-dbg.js": 1766494804568,
+  "model/models.js.map": 1766507546314,
+  "Component-dbg.js": 1766494804564,
+  "Component.js.map": 1766507546315,
+  "Component-preload.js": 1766507546402,
+  "Component-preload.js.map": 1766507546402,
+  "view/approvals.view.xml": 1766498616388,
+  "view/App.view.xml": 1766494804572,
+  "fragments/gldata.fragment.xml": 1766500626356,
+  "css/style.css": 1766494804572,
+  "index.html": 1766494804564
+}

@@ -47,30 +47,23 @@ entity GlMasterRequests : managed {
 }
 
 entity GlMasterItems : cuid {
-    key glMasterRequests   : Association to GlMasterRequests;
-        GlCategory        : String;
-        ServiceType            : String;
-        BaseUnitOfMeasure      : String;
-        ServiceGroup           : String;
-        Division               : String;
-        TaxIndicator           : String;
-        ShortTextAllowed       : Boolean;
-        LongText               : String;
-        ValuationClass         : String;
-        Formula                : String;
-        Graphic                : String;
-        SSC                    : String;
-        HierarchyServiceNumber : String;
-        Wagetype               : String;
-        UPC                    : String;
-        EANCategory            : String;
-        PurchasingStatus       : String;
-        ValidityDate           : Date;
-        Numberator             : String;
-        Denominator            : String;
-        SubContractorGroup     : String;
-        CoastingModel          : String;
-        UnitOfWork             : String;
-        TaxTraiffCode          : String;
-        Edition                : String;
+    key glMasterRequests      : Association to GlMasterRequests;
+        GLAccount             : String;
+        CompanyCode           : String;
+        GLAccountType         : String;
+        AccountGroup          : String;
+        ShortText             : String;
+        GLAccountLongText     : String;
+        AccountCurrency       : String;
+        LocalCurrencyOnly     : Boolean;
+        PostingWithoutTax     : Boolean;
+        ReconciliationAccount : Boolean;
+        OpenItemManagement    : Boolean;
+        PostAutomatically     : Boolean;
+        CashFlowRelevant      : Boolean;
+        TaxCategory           : String;
+        SortKey               : String;
+        FieldStatusGroup      : String;
+        HouseBank             : String;
+        AccountID             : String;
 }

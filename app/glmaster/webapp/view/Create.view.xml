@@ -61,7 +61,7 @@
             <OverflowToolbar>
                 <Button id="bMsg" icon="sap-icon://message-popup" press="handleMessagePopoverPress" text="{messageall>/messagesLength}" />
                 <ToolbarSpacer />
-                <Button text="Send for Approval" icon="sap-icon://paper-plane" type="Accept" press="initiateApprovalProcess" />
+                <Button text="Send for Approval" icon="sap-icon://paper-plane" type="Accept" press="generateRequestId" />
             </OverflowToolbar>
         </footer>
     </Page>

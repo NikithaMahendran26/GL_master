@@ -1,0 +1,1 @@
+using ZMDGGlMaster as service from '../../srv/GlMaster';

@@ -73,6 +73,10 @@ modules:
       - workflowuimodule.zip
       name: workflowuimodule
       target-path: resources/
+    - artifacts:
+      - approvals.zip
+      name: approvals
+      target-path: resources/
 - name: glmaster
   type: html5
   path: app/glmaster
@@ -86,6 +90,16 @@ modules:
 - name: workflowuimodule
   type: html5
   path: workflow-ui-module
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: approvals
+  type: html5
+  path: app/approvals
   build-parameters:
     build-result: dist
     builder: custom
@@ -114,7 +128,7 @@ resources:
     config:
       HTML5Runtime_enabled: true
       init_data:
-        subaccount:
+        instance:
           destinations:
           - Authentication: NoAuthentication
             Name: ui5
