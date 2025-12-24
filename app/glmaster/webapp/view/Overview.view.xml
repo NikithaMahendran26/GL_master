@@ -108,14 +108,14 @@
                 updateStarted="upstarted"
                 items="{
                     path :'mainServiceModel>/GlMasterRequests',
-                    sorter:{path:'CreatedOn', descending:true}
+                    sorter:{path:'createdAt', descending:true}
                 }"
                 sticky="HeaderToolbar,ColumnHeaders"
                 selectionChange='.onRequestSelectionChange'
                 growing="true">
 
                 <items>
-                    <ColumnListItem type="Active" highlight="{ path: 'mainServiceModel>workflowStatus' }">
+                    <ColumnListItem type="Active">
                         <cells>
 
                             <Link text="{mainServiceModel>requestId}"  ariaHasPopup="Dialog"/>
@@ -125,7 +125,7 @@
                                 text="{ path: 'mainServiceModel>workflowStatus' }"
                                 active="true"/>
 
-                            <Text text="{ path: 'mainServiceModel>CreatedOn'}"/>
+                            <Text text="{ path: 'mainServiceModel>createdAt'}"/>
                             <Text text="{mainServiceModel>createdBy}"/>
 
                         </cells>
