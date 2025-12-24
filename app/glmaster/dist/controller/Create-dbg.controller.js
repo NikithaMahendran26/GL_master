@@ -613,27 +613,35 @@ sap.ui.define([
                         let definitionId = "eu10.btp-innovation-lab-s64t0r2h.glworfklow.gLProcess";
                         let commentModel = this.getView().getModel("commentModel");
                         let comments = commentModel.getData();
-                        let initialContext = { reqid: reqID, Type: "Create", Comment: comments };
+
+                        let initialContext = {
+                            reqid: reqID,
+                            Type: "Create",
+                            Comment: comments
+                        };
+
                         let url = this.getBaseURL() + "/workflow-instances";
 
                         $.ajax({
                             url: url,
                             method: "POST",
                             contentType: "application/json",
-                            headers: { "X-CSRF-Token": this.tokenRefresh() },
-                            data: JSON.stringify({ definitionId, context: initialContext }),
+                            data: JSON.stringify({
+                                definitionId: definitionId,
+                                context: initialContext
+                            }),
                             success: function (result) {
                                 let workflowModel = this.getView().getModel("workflowModel");
                                 workflowModel.setData({ apiResponse: result });
                                 resolve(true);
                             }.bind(this),
                             error: function (error) {
+                                console.error("Workflow start failed:", error);
                                 reject(error);
                             }
                         });
                     });
                 },
-
                 updateWorkflowHeader: function (reqID, workflowInstanceId) {
                     return new Promise((resolve, reject) => {
                         let payload = {};
