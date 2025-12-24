@@ -526,15 +526,31 @@ sap.ui.define([
                         if (!reqID) {
                             throw new Error("Request ID not generated");
                         }
+                        this._oBusyDialog.setText("Starting workflow...");
+                        let workflowSuccess = await this.startWorkflowInstance(reqID);
+                        if (!workflowSuccess) throw new Error("Failed to initiate workflow.");
 
+                        // Update backend with the workflow instance ID
+                        this._oBusyDialog.setText("Updating workflow header...");
+                        let workflowData = this.getView().getModel("workflowModel").getData();
+                        let workflowInstanceId = workflowData.apiResponse.id;
+                        await this.updateWorkflowHeader(reqID, workflowInstanceId);
+
+                        // Close BusyDialog and show success message
                         this._oBusyDialog.close();
-                        MessageBox.success("Request created successfully. Request ID: " + reqID);
+                        this.showSuccessMessage(reqID);
 
-                    } catch (err) {
-                        this._oBusyDialog?.close();
-                        MessageBox.error(err?.message || "Error while creating request");
+                    } catch (error) {
+                        // Handle errors gracefully
+                        if (this._oBusyDialog) {
+                            this._oBusyDialog.close();
+                        }
+                        MessageBox.error(error.message || "An error occurred during the process.");
+                        console.error("Error:", error);
                     }
                 },
+
+                    
                 PayloadData: function () {
                     const glModel = this.getView().getModel("glModel");
                     const glItems = glModel.getProperty("/GLCollection");
