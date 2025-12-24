@@ -10,9 +10,9 @@
      {
       "source": "^/bpmworkflowruntime/v1/(.*)$",
       "target": "/public/workflow/rest/v1/$1",
-      "destination": "BPA",
-      "authenticationType": "xsuaa",
-      "csrfProtection": false
+      "service": "com.sap.spa.processautomation",
+      "endpoint": "api",
+      "authenticationType": "xsuaa"
     },
     {
       "source": "/odata/v2/zmdggl-master/(.*)$",
