@@ -39,6 +39,7 @@ sap.ui.define([
                         messagesLength: 0,
                         messages: []
                     }), "GLMessageModel");
+
                 },
 
                 navBack: function () {
@@ -541,7 +542,7 @@ sap.ui.define([
                     const oData = {
                         workflowStatus: "Draft",
                         type: this.getView().getModel("serviceModel").getProperty("/RequestType"),
-                        glMasterItems: []   // MUST MATCH CDS COMPOSITION NAME
+                        glMasterItems: []  
                     };
 
                     glItems.forEach(item => {

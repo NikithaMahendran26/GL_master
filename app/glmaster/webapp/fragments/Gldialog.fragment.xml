@@ -40,10 +40,12 @@
                             <f:content>
                                 <Label text="GL Account"/>
                                 <Input id="inpGLAccount"
+                                       required="true"
                                        value="{GLRequestModel>/GLAccount}"/>
 
                                 <Label text="Company Code"/>
                                 <Input id="inpCompanyCode"
+                                       required="true"
                                        value="{GLRequestModel>/CompanyCode}"/>
                             </f:content>
                         </f:SimpleForm>
@@ -74,10 +76,12 @@
                             <f:content>
                                 <Label text="GL Account Type"/>
                                 <Input id="inpGLType"
+                                       required="true"
                                        value="{GLRequestModel>/GLAccountType}"/>
 
                                 <Label text="Account Group"/>
                                 <Input id="inpAccGroup"
+                                       required="true"
                                        value="{GLRequestModel>/AccountGroup}"/>
 
                                 <Label text="Short Text"/>
@@ -166,6 +170,7 @@
                             <f:content>
                                 <Label text="Field Status Group"/>
                                 <Input id="inpFieldStatus"
+                                       required="true"
                                        value="{GLRequestModel>/FieldStatusGroup}"/>
 
                                 <Label text="Post Automatically Only"/>

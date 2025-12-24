@@ -36,7 +36,7 @@
                                             text="View"
                                             type="Emphasized"
                                             icon="sap-icon://detail-view"
-                                            enabled="true"
+                                            enabled="false"
                                             press="onViewApproval" />
                                         <Button
                                             id="editbtn"

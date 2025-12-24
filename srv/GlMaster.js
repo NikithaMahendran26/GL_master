@@ -10,12 +10,12 @@ class ZMDGGlMaster extends cds.ApplicationService {
 
       let requestIdSequence = new SequenceHelper({
         db: db,
-        table: "COM_SAP_SERVICEMASTER_SERVICEMASTERREQUESTS",
+        table: "COM_SAP_GLMASTER_GLMASTERREQUESTS",
         field: "REQUESTID"
       });
 
       // prefix
-      let prefix = "SRV";
+      let prefix = "REQ";
       if (req.data.type === "Change") prefix = "CRQ";
       else if (req.data.type === "Extend") prefix = "EXQ";
 

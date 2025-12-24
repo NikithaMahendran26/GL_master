@@ -41,17 +41,19 @@ sap.ui.define([
 
             if (!this._glDialog) {
                 Fragment.load({
+                    id: this.getView().getId(),   // ✅ VERY IMPORTANT
                     name: "approvals.fragments.gldata",
                     controller: this
-                }).then(oDialog => {
+                }).then(function (oDialog) {
                     this._glDialog = oDialog;
                     this.getView().addDependent(oDialog);
-                    oDialog.open();
-                });
+                    oDialog.open();               // ✅ dialog opens correctly
+                }.bind(this));
             } else {
                 this._glDialog.open();
             }
         },
+
          onCloseGL: function () {
             this._glDialog.close();
         }
