@@ -83,7 +83,7 @@ sap.ui.define([
                     // this.createMessageModel();
 
                     // Create other models
-                    this.getView().setModel(new JSONModel({}), "ServiceRequestModel");
+                    this.getView().setModel(new JSONModel({}), "GLRequestModel");
 
                     // Create JSON Model for Excel Column Config
                     // var oModel = new JSONModel(sap.ui.require.toUrl("materialmaster/model/excelHdr.json"));
@@ -127,10 +127,10 @@ sap.ui.define([
                         RequestId: "",
                         RequestType: requestType,
                         WorkflowInstanceId: "",
-                        ServiceCollection: []
+                        GLCollection: []
                     };
-                    this.getView().setModel(new JSONModel(oData), "serviceModel");
-                    this.getView().getModel("serviceModel").refresh(true);
+                    this.getView().setModel(new JSONModel(oData), "glModel");
+                    this.getView().getModel("glModel").refresh(true);
                 },
 
                 getGLObject: function () {
@@ -156,10 +156,10 @@ sap.ui.define([
                     };
                 },
 
-                createServiceRequestModel: function (oView, logonLanguage) {
-                    let objService = this.getServiceObject(logonLanguage);
+                createGLRequestModel: function (oView, logonLanguage) {
+                    let objService = this.getGLObject(logonLanguage);
                     let oModel = new JSONModel(objService);
-                    oView.setModel(oModel, "ServiceRequestModel");
+                    oView.setModel(oModel, "GLRequestModel");
                 },
                 createServiceMessageModel: function (oView) {
                     let oModel = new JSONModel({
@@ -255,8 +255,8 @@ sap.ui.define([
                             this._editServicePath = oBindingContext.getPath();
 
                             let objService = JSON.parse(JSON.stringify(oBindingContext.getObject()));
-                            this.getView().getModel("ServiceRequestModel").setData(objService);
-                            this.getView().getModel("ServiceRequestModel").refresh(true);
+                            this.getView().getModel("GLRequestModel").setData(objService);
+                            this.getView().getModel("GLRequestModel").refresh(true);
 
 
                         } else {
@@ -301,7 +301,7 @@ sap.ui.define([
 
                 updateGLUIFields: function (viewType) {
 
-                    let requestType = this.getView().getModel("serviceModel").getProperty("/RequestType");
+                    let requestType = this.getView().getModel("glModel").getProperty("/RequestType");
                     let bEditable = false;
                     let bVisible = false;
 
@@ -540,8 +540,8 @@ sap.ui.define([
                     const glItems = glModel.getProperty("/GLCollection");
 
                     const oData = {
-                        workflowStatus: "Draft",
-                        type: this.getView().getModel("serviceModel").getProperty("/RequestType"),
+                        workflowStatus: "In Approval",
+                        type: this.getView().getModel("glModel").getProperty("/RequestType"),
                         glMasterItems: []  
                     };
 
@@ -584,7 +584,7 @@ sap.ui.define([
 
                         oModel.create("/GlMasterRequests", payload, {
                             success: function (data) {
-                                resolve(data.reqestId);   // Backend-generated Request ID
+                                resolve(data.requestId);   
                             },
                             error: function (oError) {
                                 reject(oError);
@@ -597,7 +597,7 @@ sap.ui.define([
                         let definitionId = "eu10.btp-innovation-lab-s64t0r2h.glworfklow.gLProcess";
                         let commentModel = this.getView().getModel("commentModel");
                         let comments = commentModel.getData();
-                        let initialContext = { reqno: reqID, Type: "Create", Comment: comments };
+                        let initialContext = { reqid: reqID, Type: "Create", Comment: comments };
                         let url = this.getBaseURL() + "/workflow-instances";
 
                         $.ajax({
@@ -679,9 +679,9 @@ sap.ui.define([
                             }
                             var osrvTable = oView.byId("srvTable");
                             if (osrvTable) {
-                                var osrvModel = osrvTable.getModel("serviceModel");
+                                var osrvModel = osrvTable.getModel("glModel");
                                 if (osrvModel) {
-                                    osrvModel.setData({ ServiceCollection: [] });
+                                    osrvModel.setData({ GLCollection: [] });
                                     osrvModel.updateBindings(true);
                                 }
                             }
