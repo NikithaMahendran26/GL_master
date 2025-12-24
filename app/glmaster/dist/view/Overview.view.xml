@@ -63,7 +63,7 @@
                                 <fb:control>
                                     <Select id="rStat" forceSelection="false">
                                         <items>
-                                            <core:Item key="" text="Draft"/>
+                                            <core:Item key="D" text="Draft"/>
                                             <core:Item key="I" text="In Approval"/>
                                             <core:Item key="C" text="Completed"/>
                                             <core:Item key="R" text="Rejected"/>
@@ -108,7 +108,7 @@
                 updateStarted="upstarted"
                 items="{
                     path :'mainServiceModel>/GlMasterRequests',
-                    sorter:{path:'createdAt', descending:true}
+                    sorter:{path:'CreatedOn', descending:true}
                 }"
                 sticky="HeaderToolbar,ColumnHeaders"
                 selectionChange='.onRequestSelectionChange'
@@ -118,16 +118,14 @@
                     <ColumnListItem type="Active" highlight="{ path: 'mainServiceModel>workflowStatus' }">
                         <cells>
 
-                            <Link text="{mainServiceModel>requestId}" press="ViewMaterialCodes" ariaHasPopup="Dialog"/>
+                            <Link text="{mainServiceModel>requestId}"  ariaHasPopup="Dialog"/>
                             <Text text="{mainServiceModel>type}" />
 
                             <ObjectStatus 
                                 text="{ path: 'mainServiceModel>workflowStatus' }"
-                                state="{ path: 'mainServiceModel>workflowStatus' }"
-                                press="viewApproverContact"
                                 active="true"/>
 
-                            <Text text="{ path: 'mainServiceModel>createdAt'}"/>
+                            <Text text="{ path: 'mainServiceModel>CreatedOn'}"/>
                             <Text text="{mainServiceModel>createdBy}"/>
 
                         </cells>

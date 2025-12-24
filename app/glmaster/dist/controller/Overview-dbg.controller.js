@@ -56,8 +56,5 @@ sap.ui.define([
         onCreate: function () {
             this.navTo("Create");
         }
-    
-
-        
     });
 });
