@@ -614,7 +614,7 @@ sap.ui.define([
                         let commentModel = this.getView().getModel("commentModel");
                         let comments = commentModel.getData();
                         let initialContext = { reqid: reqID, Type: "Create", Comment: comments };
-                        let url = this.getBaseURL() + "/workflow-instances";
+                        let url = this.getBaseURL() + "/workflow-instances?environmentId=dataguardian";
 
                         $.ajax({
                             url: url,
