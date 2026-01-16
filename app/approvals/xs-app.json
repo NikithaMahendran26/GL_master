@@ -15,6 +15,20 @@
       "destination": "ui5"
     },
     {
+      "source": "^/bpmworkflowruntime/v1/(.*)$",
+      "target": "/workflow-service/rest/v1/$1",
+      "service": "com.sap.spa.processautomation",
+      "endpoint": "api",
+      "authenticationType": "xsuaa"
+    },
+    {
+      "source": "/odata/v2/zmdggl-master/(.*)$",
+      "target": "/odata/v2/zmdggl-master/$1",
+      "destination": "mdg-gl-dest-api",
+      "csrfProtection": false,
+      "authenticationType": "xsuaa"
+    },
+    {
       "source": "^(.*)$",
       "target": "$1",
       "service": "html5-apps-repo-rt",

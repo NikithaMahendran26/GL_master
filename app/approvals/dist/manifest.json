@@ -83,7 +83,7 @@
 					]
 				}
 			},
-			"": {
+			"mainServiceModel": {
 				"dataSource": "mainService",
 				"preload": true,
 				"settings": {
@@ -129,9 +129,9 @@
 			}
 		},
 		"rootView": {
-			"viewName": "approvals.view.App",
+			"viewName": "approvals.view.approvals",
 			"type": "XML",
-			"id": "App",
+			"id": "app",
 			"async": true
 		},
 		"flexBundle": false

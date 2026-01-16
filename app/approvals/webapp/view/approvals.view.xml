@@ -20,7 +20,7 @@
                             noDataText="No GL records available"
                             selectionChange=".onSelectionChange"
                             mode="SingleSelectLeft"
-                            items="{glModel>/GLCollection}">
+                            items="{glModel>/items}">
                             <headerToolbar>
                                 <OverflowToolbar>
                                     <content>
@@ -68,7 +68,7 @@
                                     <cells>
                                         <Text text="{glModel>GLAccount}" />
                                         <Text text="{glModel>CompanyCode}" />
-                                        <Text text="{glModel>GLType}" />
+                                        <Text text="{glModel>GLAccountType}" />
                                         <Text text="{glModel>AccountGroup}" />
                                     </cells>
                                 </ColumnListItem>
