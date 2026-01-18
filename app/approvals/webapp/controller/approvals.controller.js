@@ -1,13 +1,3 @@
-// sap.ui.define([
-//     "sap/ui/core/mvc/Controller"
-// ], (Controller) => {
-//     "use strict";
-
-//     return Controller.extend("approvals.controller.approvals", {
-//         onInit() {
-//         }
-//     });
-// });
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/core/Fragment",
@@ -20,7 +10,7 @@ sap.ui.define([
 
         // 
         onInit: function () {
-           // this.getRouter().initialize();
+            // this.getRouter().initialize();
             var oComments = new JSONModel();
             var aComments = [];
             oComments.setData(aComments);
@@ -34,61 +24,79 @@ sap.ui.define([
             // }
         },
 
-        onViewApproval: function () {
-    if (!this._selectedGL) {
-        MessageToast.show("Please select a GL record");
-        return;
-    }
+        onViewApproval: async function () {
+            if (!this._selectedGL) {
+                MessageToast.show("Please select a GL record");
+                return;
+            }
 
-    // Set model for fragment
-    const oModel = new JSONModel(this._selectedGL);
-    this.getView().setModel(oModel, "GLRequestModel");
 
-    this._openDialog(false, "View GL Account");
-},
+            this.getView().setModel(
+                new JSONModel(this._selectedGL),
+                "GLRequestModel"
+            );
+
+            const oUI = this.getView().getModel("ui");
+            oUI.setProperty("/editable", false);
+            oUI.setProperty("/title", "View GL Account");
+            oUI.setProperty("/closeText", "Close");
+
+            if (!this._glDialog) {
+                this._glDialog = await Fragment.load({
+                    id: this.getView().getId(),
+                    name: "approvals.fragments.gldata",
+                    controller: this
+                });
+
+                this.getView().addDependent(this._glDialog);
+            }
+
+
+            this._glDialog.open();
+        },
         _openDialog: async function (bEditable, sTitle) {
-    const oUI = this.getView().getModel("ui");
+            const oUI = this.getView().getModel("ui");
 
-    oUI.setProperty("/editable", bEditable);
-    oUI.setProperty("/title", sTitle);
-    oUI.setProperty("/closeText", bEditable ? "Cancel" : "Close");
+            oUI.setProperty("/editable", bEditable);
+            oUI.setProperty("/title", sTitle);
+            oUI.setProperty("/closeText", bEditable ? "Cancel" : "Close");
 
-    if (!this._glDialog) {
-        this._glDialog = await Fragment.load({
-            id: this.getView().getId(),   
-            name: "approvals.fragments.gldata",
-            controller: this
-        });
-    }
+            if (!this._glDialog) {
+                this._glDialog = await Fragment.load({
+                    id: this.getView().getId(),
+                    name: "approvals.fragments.gldata",
+                    controller: this
+                });
+            }
 
-    this._glDialog.open();
-},
+            this._glDialog.open();
+        },
 
         onSelectionChange: function (oEvent) {
-    const oItem = oEvent.getParameter("listItem");
-    const hasSelection = !!oItem;
+            const oItem = oEvent.getParameter("listItem");
+            const hasSelection = !!oItem;
 
-    this.byId("viewbtn").setEnabled(hasSelection);
-    this.byId("changeLogBtn").setEnabled(hasSelection);
+            this.byId("viewbtn").setEnabled(hasSelection);
+            this.byId("changeLogBtn").setEnabled(hasSelection);
 
-    if (hasSelection) {
-        this._selectedGL = oItem.getBindingContext("glModel").getObject();
-    }
-},
+            if (hasSelection) {
+                this._selectedGL = oItem.getBindingContext("glModel").getObject();
+            }
+        },
 
         onCommentPost: function (oEvent) {
-    const text = oEvent.getParameter("value");
-    if (!text) return;
+            const text = oEvent.getParameter("value");
+            if (!text) return;
 
-    const user =
-        sap.ushell?.Container?.getUser?.().getEmail() || "approver@dummy";
+            const user =
+                sap.ushell?.Container?.getUser?.().getEmail() || "approver@dummy";
 
-    this.getOwnerComponent().addApproverComment(text, user);
+            this.getOwnerComponent().addApproverComment(text, user);
 
-    oEvent.getSource().setValue("");
-},
+            oEvent.getSource().setValue("");
+        },
 
-         onCloseGL: function () {
+        onCloseGL: function () {
             this._glDialog.close();
         }
 
