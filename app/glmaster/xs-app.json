@@ -34,6 +34,20 @@
       "destination": "ui5"
     },
     {
+      "source": "^/sap/(.*)$",
+      "target": "/sap/$1",
+      "destination": "DIM",
+      "authenticationType": "xsuaa",
+      "csrfProtection": false
+    }, 
+    {
+      "source": "^/odata/(.*)$",
+      "target": "/odata/$1",
+      "destination": "DIM",
+      "authenticationType": "xsuaa",
+      "csrfProtection": false
+    },
+    {
       "source": "^(.*)$",
       "target": "$1",
       "service": "html5-apps-repo-rt",

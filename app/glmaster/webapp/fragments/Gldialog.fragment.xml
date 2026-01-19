@@ -46,7 +46,10 @@
                                 <Label text="Company Code"/>
                                 <Input id="inpCompanyCode"
                                        required="true"
-                                       value="{GLRequestModel>/CompanyCode}"/>
+                                       value="{GLRequestModel>/CompanyCode}"
+                                       showValueHelp="true"
+                                       valueHelpRequest="onValueHelpRequestCompanyCode"
+                                       />
                             </f:content>
                         </f:SimpleForm>
                     </IconTabFilter>

@@ -28,6 +28,13 @@
 					"annotations": [],
 					"odataVersion": "2.0"
 				}
+			},
+			"CreateGLService": {
+				"uri": "/sap/opu/odata/sap/ZGLACCT_DETAILS_SRV/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0"
+				}
 			}
 		},
 		"crossNavigation": {
@@ -90,6 +97,14 @@
 					"operationMode": "Server",
 					"autoExpandSelect": true,
 					"earlyRequests": true
+				}
+			},
+			"CreateGLServiceModel": {
+				"dataSource": "CreateGLService",
+				"preload": true,
+				"settings": {
+					"useBatch": false,
+					"defaultBindingMode": "TwoWay"
 				}
 			}
 		},

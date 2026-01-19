@@ -721,7 +721,7 @@ sap.ui.define([
                         // Only load the fragment once
                         Fragment.load({
                             id: this.getView().getId(),
-                            name: "com.mdg.service.servicemaster.fragments.F4Dialog"
+                            name: "glmaster.fragments.F4Dialog"
                         }).then(oDialog => {
                             this.F4Dialog = oDialog;
                             let view = this.getView();
@@ -735,7 +735,8 @@ sap.ui.define([
                             oDialog.attachSearch(this._handleValueHelpSearch, this);
                             oDialog.attachLiveChange(this._handleValueHelpSearch, this);
                             oDialog.attachConfirm(this._handleValueHelpClose, this);
-                            oDialog.attachCancel(this._handleValueHelpClose, this);
+                            oDialog.attachCancel(function (oEvent) {oEvent.getSource().close();
+                            });
 
                             oDialog.open();
                         }).catch(err => {
@@ -751,7 +752,7 @@ sap.ui.define([
                         this.F4Dialog.attachSearch(this._handleValueHelpSearch, this);
                         this.F4Dialog.attachLiveChange(this._handleValueHelpSearch, this);
                         this.F4Dialog.attachConfirm(this._handleValueHelpClose, this);
-                        this.F4Dialog.attachCancel(this._handleValueHelpClose, this);
+                        //this.F4Dialog.attachCancel(this._handleValueHelpClose, this);
 
                         this.F4Dialog.open();
                     }
@@ -772,206 +773,46 @@ sap.ui.define([
                     oBinding.filter(oFilter);
                 },
                 _handleValueHelpClose: function (oEvent) {
-                    let oSelectedItem = oEvent.getParameter("selectedItem");
+                    const oSelectedItem = oEvent.getParameter("selectedItem");
                     if (!oSelectedItem) {
                         return;
                     }
 
-                    let inputField = this.getView().byId(this.inputId);
-                    if (inputField) {
-                        inputField.setValue(oSelectedItem.getTitle());
+                    const sValue = oSelectedItem.getTitle();
+                    const oInput = sap.ui.getCore().byId(this.inputId);
+
+
+                    if (oInput) {
+
+                        oInput.setValue(sValue);
+
+
+                        const oBinding = oInput.getBinding("value");
+                        if (oBinding) {
+                            oBinding.setValue(sValue);
+                        }
                     }
 
-
+                    oEvent.getSource().close();
                 },
-                onValueHelpRequestUOM: function (oEvent) {
-                    let model = this.getOwnerComponent().getModel("masterServiceModel"),
-                        entityset = "/ZI_BASEUOM",
-                        filters = [new sap.ui.model.Filter("language", sap.ui.model.FilterOperator.EQ, "EN")];
+                onValueHelpRequestCompanyCode: function (oEvent) {
+                    console.log("F4 triggered");
+                    let model = this.getOwnerComponent().getModel("companyServiceModel"),
+                        entityset = "/A_CompanyCode",
+                        filters = [];
                     this.getF4Data(model, entityset, filters).then(data => {
+                        console.log("F4 data received", data);
                         let formattedData = [];
                         data?.results.forEach(item => {
                             formattedData.push({
-                                "title": item.weightUnit,
-                                "description": item.weightUnitText
+                                "title": item.CompanyCode,
+                                "description": item.CompanyCodeName
                             });
                         });
-                        this.openF4Dialog("Unit Of Measure", formattedData, oEvent.getSource().getId());
+                        this.openF4Dialog("Company Code", formattedData, oEvent.getSource().getId());
                     }).catch(err => {
-                        MessageBox.error("Failed to load data for Unit Of Measure: " + err.message);
+                        MessageBox.error("Failed to load data for Company Code: " + err.message);
                     });
-                },
-                onValueHelpRequestMatGrp: function (oEvent) {
-                    let model = this.getOwnerComponent().getModel("masterServiceModel"),
-                        entityset = "/I_MaterialGroup"
-                    this.getF4Data(model, entityset).then(data => {
-                        let formattedData = [];
-                        data?.results.forEach(item => {
-                            formattedData.push({
-                                "title": item.MaterialGroup,
-                                "description": item.MaterialGroup_Text
-                            });
-                        });
-                        this.openF4Dialog("Material Group", formattedData, oEvent.getSource().getId());
-                    }).catch(err => {
-                        MessageBox.error("Failed to load data for Material Group: " + err.message);
-                    });
-                },
-                onValueHelpRequestDivision: function (oEvent) {
-                    let model = this.getOwnerComponent().getModel("masterServiceModel"),
-                        entityset = "/ZI_DIVISION",
-                        filters = [new sap.ui.model.Filter("LANGUAGE", sap.ui.model.FilterOperator.EQ, "EN")];
-                    this.getF4Data(model, entityset, filters).then(data => {
-                        let formattedData = [];
-                        data?.results.forEach(item => {
-                            formattedData.push({
-                                "title": item.DIVISION,
-                                "description": item.NAME
-                            });
-                        });
-                        this.openF4Dialog("Division", formattedData, oEvent.getSource().getId());
-                    }).catch(err => {
-                        MessageBox.error("Failed to load data for Division: " + err.message);
-                    });
-                },
-                onValueHelpRequestValClass: function (oEvent) {
-                    let model = this.getOwnerComponent().getModel("masterServiceModel"),
-                        entityset = "/I_Prodvaluationclasstxt",
-                        filters = [new sap.ui.model.Filter("Language", sap.ui.model.FilterOperator.EQ, "EN")];
-                    this.getF4Data(model, entityset, filters).then(data => {
-                        let formattedData = [];
-                        data?.results.forEach(item => {
-                            formattedData.push({
-                                "title": item.ValuationClass,
-                                "description": item.ValuationClassDescription
-                            });
-                        });
-                        this.openF4Dialog("Valuation Class", formattedData, oEvent.getSource().getId());
-                    }).catch(err => {
-                        MessageBox.error("Failed to load data for Valuation Class: " + err.message);
-                    });
-                },
-                onValueHelpRequestFormula: function (oEvent) {
-                    let model = this.getOwnerComponent().getModel("masterServiceModel"),
-                        entityset = "/ZI_FORMULANO",
-                        filters = [new sap.ui.model.Filter("LANGUAGE", sap.ui.model.FilterOperator.EQ, "EN")];
-                    this.getF4Data(model, entityset, filters).then(data => {
-                        let formattedData = [];
-                        data?.results.forEach(item => {
-                            formattedData.push({
-                                "title": item.FormulaNumber,
-                                "description": item.DESCRIPTION
-                            });
-                        });
-                        this.openF4Dialog("Formula", formattedData, oEvent.getSource().getId());
-                    }).catch(err => {
-                        MessageBox.error("Failed to load data for Formula: " + err.message);
-                    });
-                },
-                onValueHelpRequestTaxTraiffCode: function (oEvent) {
-                    let model = this.getOwnerComponent().getModel("masterServiceModel"),
-                        entityset = "/I_AE_CNSMPNTAXCTRLCODETXT",
-                        filters = [new sap.ui.model.Filter("Language", sap.ui.model.FilterOperator.EQ, "EN")];
-                    this.getF4Data(model, entityset, filters).then(data => {
-                        let formattedData = [];
-                        data?.results.forEach(item => {
-                            formattedData.push({
-                                "title": item.ConsumptionTaxCtrlCode,
-                                "description": item.ConsumptionTaxCtrlCodeText1,
-                                "info": item.CountryCode
-                            });
-                        });
-                        this.openF4Dialog("Tax Traiff Code", formattedData, oEvent.getSource().getId());
-                    }).catch(err => {
-                        MessageBox.error("Failed to load data for Tax Traiff Code: " + err.message);
-                    });
-                },
-                onValueHelpRequestHierarchyServiceNumber: function (oEvent) {
-                    let model = this.getOwnerComponent().getModel("masterServiceModel"),
-                        entityset = "/ZI_HIERSERVNO"
-                    this.getF4Data(model, entityset).then(data => {
-                        let formattedData = [];
-                        data?.results.forEach(item => {
-                            formattedData.push({
-                                "title": item.SERVNO,
-                                "description": item.HIERARCHYSRVNO
-                            });
-                        });
-                        this.openF4Dialog("Hierarchy Service Number", formattedData, oEvent.getSource().getId());
-                    }).catch(err => {
-                        MessageBox.error("Failed to load data for Hierarchy Service Number: " + err.message);
-                    });
-                },
-                onValueHelpRequestEANcat: function (oEvent) {
-                    let model = this.getOwnerComponent().getModel("masterServiceModel"),
-                        entityset = "/ZI_EANCATEGORY",
-                        filters = [new sap.ui.model.Filter("LANGUAGE", sap.ui.model.FilterOperator.EQ, "EN")];
-                    this.getF4Data(model, entityset, filters).then(data => {
-                        let formattedData = [];
-                        data?.results.forEach(item => {
-                            formattedData.push({
-                                "title": item.EAN,
-                                "description": item.DESCRIPTION
-                            });
-                        });
-                        this.openF4Dialog("Ean Category", formattedData, oEvent.getSource().getId());
-                    }).catch(err => {
-                        MessageBox.error("Failed to load data for Ean Category: " + err.message);
-                    });
-                },
-                onValueHelpRequestCoastingModel: function (oEvent) {
-                    let model = this.getOwnerComponent().getModel("masterServiceModel"),
-                        entityset = "/ZI_COSTMODEL",
-                        filters = [new sap.ui.model.Filter("LANGUAGE", sap.ui.model.FilterOperator.EQ, "EN")];
-                    this.getF4Data(model, entityset, filters).then(data => {
-                        let formattedData = [];
-                        data?.results.forEach(item => {
-                            formattedData.push({
-                                "title": item.COSTMODEL,
-                                "description": item.DESCRIPTION,
-                                "info": item.SEQNO
-                            });
-                        });
-                        this.openF4Dialog("Costing Model", formattedData, oEvent.getSource().getId());
-                    }).catch(err => {
-                        MessageBox.error("Failed to load data for Costing Model: " + err.message);
-                    });
-                },
-                onValueHelpRequestServiceCategory: function (oEvent) {
-                    var model = this.getOwnerComponent().getModel("masterServiceModel");
-                    var entityset = "/ZI_SERVCAT";
-                    var filters = [
-                        new sap.ui.model.Filter("LANGUAGE", sap.ui.model.FilterOperator.EQ, "EN")
-                    ];
-
-                    return this.getF4Data(model, entityset, filters)
-                        .then(function (data) {
-                            var formattedData = [];
-
-                            (data.results || []).forEach(function (item) {
-                                formattedData.push({
-                                    ServiceType: item.SERVICECATEGORY,
-                                    ServiceTypeName: item.DESCRIPTION,
-                                    title: item.SERVICECATEGORY,
-                                    description: item.DESCRIPTION
-                                });
-                            });
-                            if (oEvent) {
-                                this.openF4Dialog(
-                                    "Service Category",
-                                    formattedData,
-                                    oEvent.getSource().getId()
-                                );
-                            }
-
-                            return formattedData;
-                        }.bind(this))
-                        .catch(function (err) {
-                            MessageBox.error(
-                                "Failed to load data for Service Type"
-                            );
-                            return [];
-                        });
                 },
                 onCopySrv: async function () {
                     if (!this.CopyPopup) {

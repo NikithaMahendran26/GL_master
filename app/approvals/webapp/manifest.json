@@ -23,6 +23,13 @@
           "annotations": [],
           "odataVersion": "2.0"
         }
+      },
+      "CreateGLService": {
+        "uri": "/sap/opu/odata/sap/ZGLACCT_DETAILS_SRV/",
+        "type": "OData",
+        "settings": {
+          "odataVersion": "2.0"
+        }
       }
     },
     "crossNavigation": {
@@ -83,6 +90,14 @@
           "autoExpandSelect": true,
           "earlyRequests": true
         }
+      },
+      "CreateGLServiceModel": {
+        "dataSource": "CreateGLService",
+        "preload": true,
+        "settings": {
+          "useBatch": false,
+          "defaultBindingMode": "TwoWay"
+        }
       }
     },
     "resources": {
@@ -128,87 +143,87 @@
     }
   },
   "sap.cloud": {
-        "public": true,
-        "service": "MDG_GL_MASTER"
+    "public": true,
+    "service": "MDG_GL_MASTER"
+  },
+  "sap.bpa.task": {
+    "_version": "1.1.0",
+    "outcomes": [
+      {
+        "id": "approve",
+        "label": "Approve",
+        "type": "positive"
       },
-      "sap.bpa.task": {
-        "_version": "1.1.0",
-        "outcomes": [
-          {
-            "id": "approve",
-            "label": "Approve",
-            "type": "positive"
-          },
-          {
-            "id": "reject",
-            "label": "Reject",
-            "type": "negative"
-          },
-          {
-            "id": "rework",
-            "label": "Re-Work",
-            "type": "neutral"
-          }
-        ],
-        "inputs": {
-          "$schema": "http://json-schema.org/draft-07/schema",
-          "title": "input",
-          "type": "object",
-          "required": []
-        },
-        "outputs": {
-          "$schema": "http://json-schema.org/draft-07/schema",
-          "title": "output",
-          "type": "object",
-          "required": [],
-          "properties": {
-            "Comments": {
-              "type": "array",
-              "items": {
-                "type": "object"
-              },
-              "default": [],
-              "title": "comment",
-              "description": "Approver's Response"
-            },
-            "ApproverId": {
-              "type": "string",
-              "title": "approverid",
-              "description": "Approver's ID"
-            },
-            "Approve": {
-              "type": "string",
-              "title": "Approve",
-              "description": "Approve"
-            },
-            "Reject": {
-              "type": "string",
-              "title": "Reject",
-              "description": "Reject"
-            }
-          },
-          "TaskInfo": {
-            "type": "object",
-            "description": "Task Instance details",
-            "properties": {
-              "ID": {
-                "type": "string",
-                "description": "Task Instance id",
-                "title": "Task Instance ID"
-              },
-              "Approver": {
-                "type": "string",
-                "description": "Approver completed the task",
-                "title": "Approver"
-              },
-              "Decision": {
-                "type": "string",
-                "description": "Approver Decision",
-                "title": "Decision"
-              }
-            }
-          }
-        },
-        "category": "approval"
+      {
+        "id": "reject",
+        "label": "Reject",
+        "type": "negative"
+      },
+      {
+        "id": "rework",
+        "label": "Re-Work",
+        "type": "neutral"
       }
-    }
+    ],
+    "inputs": {
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "title": "input",
+      "type": "object",
+      "required": []
+    },
+    "outputs": {
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "title": "output",
+      "type": "object",
+      "required": [],
+      "properties": {
+        "Comments": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "default": [],
+          "title": "comment",
+          "description": "Approver's Response"
+        },
+        "ApproverId": {
+          "type": "string",
+          "title": "approverid",
+          "description": "Approver's ID"
+        },
+        "Approve": {
+          "type": "string",
+          "title": "Approve",
+          "description": "Approve"
+        },
+        "Reject": {
+          "type": "string",
+          "title": "Reject",
+          "description": "Reject"
+        }
+      },
+      "TaskInfo": {
+        "type": "object",
+        "description": "Task Instance details",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "description": "Task Instance id",
+            "title": "Task Instance ID"
+          },
+          "Approver": {
+            "type": "string",
+            "description": "Approver completed the task",
+            "title": "Approver"
+          },
+          "Decision": {
+            "type": "string",
+            "description": "Approver Decision",
+            "title": "Decision"
+          }
+        }
+      }
+    },
+    "category": "approval"
+  }
+}

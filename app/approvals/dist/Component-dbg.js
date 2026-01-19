@@ -20,8 +20,33 @@ sap.ui.define([
         closeText: "Close"
       }), "ui");
 
+      this._setupInboxActions();
       this._initFromInbox();
     },
+
+    _setupInboxActions: function () {
+    const startup = this.getComponentData()?.startupParameters;
+
+    if (!startup?.inboxAPI) {
+        console.warn("Inbox API not available");
+        return;
+    }
+
+    const inboxAPI = startup.inboxAPI;
+
+    inboxAPI.addAction({
+        action: "APPROVE",
+        label: "Approve",
+        type: "accept"
+    }, () => this._onApprove());
+
+    inboxAPI.addAction({
+        action: "REJECT",
+        label: "Reject",
+        type: "reject"
+    }, () => this._onReject());
+},
+
 
     createContent: function () {
       this._mainView = sap.ui.view({
@@ -31,6 +56,9 @@ sap.ui.define([
       });
 
       this._mainView.setModel(this.getModel("ui"), "ui");
+      this._mainView.setModel(this.getModel("commentModel"), "commentModel");
+this._mainView.setModel(this.getModel("initiatorModel"), "initiatorModel");
+this._mainView.setModel(this.getModel("approverModel"), "approverModel");
       return this._mainView;
     },
 
@@ -71,39 +99,38 @@ sap.ui.define([
        LOAD GL REQUEST
        =============================== */
     _loadGL: function (reqId) {
-  const oModel = this.getModel("mainServiceModel") || this.getModel();
+    const oModel = this.getModel("mainServiceModel") || this.getModel();
 
-  if (!oModel) {
-    console.error("OData model not found");
-    return;
-  }
-
-  const sPath = `/GlMasterRequests(requestId='${reqId}')`;
-
-  oModel.read(sPath, {
-    urlParameters: {
-      "$expand": "glMasterItems"
-    },
-    success: function (oData) {
-      console.log("GL OData response", oData);
-
-      const oGlModel = new JSONModel({
-        items: oData.glMasterItems?.results || []
-      });
-
-      if (this._mainView) {
-        this._mainView.setModel(oGlModel, "glModel");
-      } else {
-        this.setModel(oGlModel, "glModel");
-      }
-    }.bind(this),
-
-    error: function (oError) {
-      console.error("Failed to load GL request", oError);
+    if (!oModel) {
+        console.error("OData model not found");
+        return;
     }
-  });
-},
 
+    const sPath = `/GlMasterRequests(requestId='${reqId}')`;
+
+    oModel.read(sPath, {
+        urlParameters: {
+      "$expand": "glMasterItems"
+        },
+        success: function (oData) {
+            console.log("GL OData response", oData);
+
+            const oGlModel = new JSONModel({
+                items: oData.glMasterItems?.results || []
+            });
+
+            if (this._mainView) {
+                this._mainView.setModel(oGlModel, "glModel");
+            } else {
+                this.setModel(oGlModel, "glModel");
+            }
+        }.bind(this),
+
+        error: function (oError) {
+            console.error("Failed to load GL request", oError);
+        }
+    });
+},
     addApproverComment: function (text, user) {
       const arr = this.getModel("approverModel").getData();
       arr.push({
@@ -122,6 +149,164 @@ sap.ui.define([
       ];
       merged.sort((a, b) => new Date(b.Date) - new Date(a.Date));
       this.getModel("commentModel").setData(merged);
+    },
+
+    _onApprove: async function () {
+    try {
+        const result = await this._postGLToSAP();
+
+        if (!result.success) {
+            sap.m.MessageBox.error(
+                "SAP Error:\n" + result.error
+            );
+            return;
+        }
+
+        sap.m.MessageToast.show("GL Account approved & created");
+
+        this._completeWorkflowTask();
+
+    } catch (e) {
+        sap.m.MessageBox.error(e.message || "Approval failed");
     }
+},
+
+_postGLToSAP: function () {
+  return new Promise((resolve) => {
+
+    const oModel = this.getModel("CreateGLServiceModel");
+
+    if (!oModel) {
+      resolve({ success: false, error: "CreateGLServiceModel not found" });
+      return;
+    }
+
+    const oGlModel =
+      this._mainView?.getModel("glModel") ||
+      this.getModel("glModel");
+
+    if (!oGlModel) {
+      resolve({ success: false, error: "GL data model not available" });
+      return;
+    }
+
+    const oData = oGlModel.getData();
+    const oGL = oData?.items?.[0];
+
+    if (!oGL) {
+      resolve({ success: false, error: "GL request data is empty" });
+      return;
+    }
+
+    const payload = {
+      GLACCNO: oGL.GLAccount || "",
+      CHACCTS: oGL.ChartOfAccounts || "",
+      ACCGRP: oGL.AccountGroup || "",
+      GLACCTYPE: oGL.GLAccountType || "",
+      LANGUAGE: "EN",
+      SHTEXT: oGL.ShortText || "",
+      LGTEXT: oGL.GLAccountLongText || "",
+      COMPCODE: oGL.CompanyCode || "",
+      CURRENCY: oGL.AccountCurrency || "",
+      FELDSTGRP: oGL.FieldStatusGroup || "",
+      HOUSEBK: oGL.HouseBank || "",
+      BALINLCLCURR: oGL.LocalCurrencyOnly === true ? "X" : "",
+      TAXCATEGORY: oGL.TaxCategory || "",
+      RECONACCT: oGL.ReconciliationAccount || "",
+      SORTKEY: oGL.SortKey || "",
+      PLACCT: oGL.PlanningAccount || "",
+      BALSHEETINDI: oGL.BalanceSheetIndicator || "",
+      TRADEPARTNO: oGL.TradingPartner || "",
+      EXRTDIFFKEY: oGL.ExchangeRateDiffKey || "",
+      ALTACCTNO: oGL.AlternateAccount || "",
+      INFKEY: oGL.InflationKey || "",
+      PSTWOTAX: oGL.PostWithoutTax || "",
+      ACTMNGEXT: oGL.OpenItemManagement === true ? "X" : "",
+      TOLGRP: oGL.ToleranceGroup || "",
+      XLGCLR: oGL.LineItemDisplay || "",
+      XOPVW: oGL.OpenItemView || "",
+      AUTHGRP: oGL.AuthorizationGroup || "",
+      CLERKABBV: oGL.ClerkAbbreviation || "",
+      RECID: oGL.RecId || "",
+      SUPAUTOPOST: oGL.SupplementAutoPost || "",
+      RECONACTINPUT: oGL.ReconAccountInput || "",
+      PLANLEVEL: oGL.PlanningLevel || "",
+      CASHFLOWREL: oGL.CashFlowRelevant || "",
+      COMMITITEM: oGL.CommitmentItem || "",
+      ACCTID: oGL.AccountId || "",
+      INTINDICATOR: oGL.InterestIndicator || "",
+      INTCALCFREQ: oGL.InterestCalcFrequency || "",
+      ZINDT: oGL.InterestKeyDate || "",
+      DATLZ: oGL.LastInterestCalcDate || "",
+      POSTAUTO: oGL.AutoPost || ""
+    };
+
+    oModel.create("/ETY_CREATEGLSet", payload, {
+      success: function () {
+        resolve({ success: true });
+      },
+      error: function (oError) {
+        let message = "Unknown SAP error";
+        try {
+          const resp = JSON.parse(oError.responseText);
+          message =
+            resp?.error?.message?.value ||
+            resp?.error?.innererror?.errordetails?.[0]?.message ||
+            message;
+        } catch (e) {}
+
+        resolve({ success: false, error: message });
+      }
+    });
+  });
+},
+
+    _fetchWorkflowToken: async function () {
+  const res = await fetch(
+    "/bpmworkflowruntime/v1/xsrf-token",
+    {
+      method: "GET",
+      headers: {
+        "X-CSRF-Token": "Fetch"
+      },
+      credentials: "include"
+    }
+  );
+
+  return res.headers.get("X-CSRF-Token");
+},
+
+_completeWorkflowTask: async function () {
+  const base = this._getWorkflowBaseURL();
+  const taskId = this.getModel("task").getData().InstanceID;
+
+  const token = await this._fetchWorkflowToken();
+
+  const res = await fetch(
+    `${base}/task-instances/${taskId}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": token
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        status: "COMPLETED"
+      })
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Workflow task completion failed");
+  }
+},
+
+
+    _getWorkflowBaseURL: function () {
+  return "/bpmworkflowruntime/v1";
+}
+
+
   });
 });

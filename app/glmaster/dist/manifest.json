@@ -21,6 +21,14 @@
 			"toolsId": "749449c7-19f7-4c53-a412-b349d237bf3b"
 		},
 		"dataSources": {
+			"companyService": {
+				"uri": "/sap/opu/odata/sap/API_COMPANYCODE_SRV/",
+				"type": "OData",
+				"settings": {
+					"annotations": [],
+					"odataVersion": "2.0"
+				}
+			},
 			"mainService": {
 				"uri": "/odata/v2/zmdggl-master/",
 				"type": "OData",
@@ -81,6 +89,15 @@
 					"supportedLocales": [
 						""
 					]
+				}
+			},
+			"companyServiceModel": {
+				"dataSource": "companyService",
+				"preload": true,
+				"settings": {
+					"operationMode": "Server",
+					"autoExpandSelect": true,
+					"earlyRequests": true
 				}
 			},
 			"mainServiceModel": {

@@ -15,11 +15,11 @@
       "destination": "ui5"
     },
     {
-      "source": "^/bpmworkflowruntime/v1/(.*)$",
-      "target": "/workflow-service/rest/v1/$1",
-      "service": "com.sap.spa.processautomation",
-      "endpoint": "api",
-      "authenticationType": "xsuaa"
+  "source": "^/bpmworkflowruntime/v1/(.*)$",
+  "target": "/public/workflow/rest/v1/$1",
+  "service": "com.sap.spa.processautomation",
+  "endpoint": "api",
+  "authenticationType": "xsuaa"
     },
     {
       "source": "/odata/v2/zmdggl-master/(.*)$",
@@ -27,6 +27,20 @@
       "destination": "mdg-gl-dest-api",
       "csrfProtection": false,
       "authenticationType": "xsuaa"
+    },
+    {
+      "source": "^/sap/(.*)$",
+      "target": "/sap/$1",
+      "destination": "DIM",
+      "authenticationType": "xsuaa",
+      "csrfProtection": false
+    }, 
+    {
+      "source": "^/odata/(.*)$",
+      "target": "/odata/$1",
+      "destination": "DIM",
+      "authenticationType": "xsuaa",
+      "csrfProtection": false
     },
     {
       "source": "^(.*)$",
