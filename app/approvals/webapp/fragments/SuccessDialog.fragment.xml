@@ -1,0 +1,31 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+
+    <Dialog
+        id="successDialog"
+        title="GL Account Created Successfully"
+        type="Message">
+
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <Text text="GL Account has been created successfully." />
+
+                <ObjectStatus
+                    title="GL Account Number"
+                    text="{successModel>/GLAccount}" />
+
+                <ObjectStatus
+                    title="Company Code"
+                    text="{successModel>/CompanyCode}" />
+            </VBox>
+        </content>
+
+        <endButton>
+            <Button
+                text="OK"
+                type="Emphasized"
+                press="onSuccessDialogClose"/>
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

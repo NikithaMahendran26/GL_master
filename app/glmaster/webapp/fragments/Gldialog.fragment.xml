@@ -78,21 +78,47 @@
 
                             <f:content>
                                 <Label text="GL Account Type"/>
-                                <Input id="inpGLType"
+                                <!-- <Input id="inpGLType"
                                        required="true"
-                                       value="{GLRequestModel>/GLAccountType}"/>
-
+                                       value="{GLRequestModel>/GLAccountType}"/> -->
+                                <Select
+                                    id="inpGLType"
+                                    required="true"
+                                    forceSelection="true"
+                                    selectedKey="{GLRequestModel>/GLAccountType}">
+                                   <items>
+                                       <core:Item key="" text="-- Select GL Account Type --" />
+                                       <core:Item key="X" text="X - Balance Sheet Account" />
+                                    </items>
+                                </Select>
+                                
                                 <Label text="Account Group"/>
+                                <Select
+                                    id="inpAccGroup"
+                                    required="true"
+                                    forceSelection="true"
+                                    selectedKey="{GLRequestModel>/AccountGroup}">
+                                   <items>
+                                       <core:Item key="" text="-- Select Account Group --" />
+                                       <core:Item key="GL" text="GL - General G/L Accounts" />
+                                    </items>
+                                </Select>
+
+
+
+                                <!-- <Label text="Account Group"/>
                                 <Input id="inpAccGroup"
                                        required="true"
-                                       value="{GLRequestModel>/AccountGroup}"/>
+                                       value="{GLRequestModel>/AccountGroup}"/> -->
 
                                 <Label text="Short Text"/>
                                 <Input id="inpShortText"
+                                       required="true"
                                        value="{GLRequestModel>/ShortText}"/>
 
                                 <Label text="GL Account Long Text"/>
                                 <Input id="inpLongText"
+                                       required="true"
                                        value="{GLRequestModel>/LongText}"/>
                             </f:content>
                         </f:SimpleForm>
@@ -119,17 +145,39 @@
                             columnsM="1"
                             singleContainerFullSize="false">
                             <f:content>
-                                <Label text="Account Currency"/>
+                                <!-- <Label text="Account Currency"/>
                                 <Input id="inpCurrency"
-                                       value="{GLRequestModel>/AccountCurrency}"/>
+                                       value="{GLRequestModel>/AccountCurrency}"/> -->
+                                <Label text="Account Currency"/>
+                                <Select
+                                    id="inpCurrency"
+                                    required="true"
+                                    forceSelection="true"
+                                    selectedKey="{GLRequestModel>/AccountCurrency}">
+                                   <items>
+                                       <core:Item key="" text="-- Select Account Currency --" />
+                                       <core:Item key="INR" text="INR" />
+                                    </items>
+                                </Select>      
 
                                 <Label text="Balance in Local Currency Only"/>
                                 <CheckBox id="chkLocalCurrencyOnly"
                                           selected="{GLRequestModel>/LocalCurrencyOnly}"/>
 
-                                <Label text="Tax Category"/>
+                                <!-- <Label text="Tax Category"/>
                                 <Input id="inpTaxCategory"
-                                       value="{GLRequestModel>/TaxCategory}"/>
+                                       value="{GLRequestModel>/TaxCategory}"/> -->
+                                <Label text="Tax Category"/>
+                                <Select
+                                    id="inpTaxCategory"
+                                    required="true"
+                                    forceSelection="true"
+                                    selectedKey="{GLRequestModel>/TaxCategory}">
+                                   <items>
+                                       <core:Item key="" text="-- Select TaxCategory --" />
+                                       <core:Item key="-B" text="-B Input tax - downpayments managed gross" />
+                                    </items>
+                                </Select>       
 
                                 <Label text="Posting Without Tax Allowed"/>
                                 <CheckBox id="chkPostingWithoutTax"

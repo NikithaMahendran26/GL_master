@@ -341,34 +341,35 @@ sap.ui.define([
                     this._oGLDialog.then(oDialog => oDialog.close());
                 },
 
-                validateInputSuggestionField: function (oData, section, ctrl, propValue) {
-                    let oEntry = {},
-                        fieldKey = ctrl?.data("i18nFieldKey"),
-                        required = ctrl?.getRequired();
+                validateInputSuggestionField: function (oData, section, ctrl) {
+                    if (!ctrl || !ctrl.getRequired || !ctrl.getRequired()) {
+                        return oData;
+                    }
 
-                    if (ctrl)
-                        if (ctrl.getValue() === "" && propValue === "" && required === true) {
-                            oEntry.type = "Error";
-                            oEntry.title = this._oBundle.getText("field_mandt", [this._oBundle.getText(fieldKey)]);
-                            oEntry.description = this._oBundle.getText("field_mandt_desc", [this._oBundle.getText(fieldKey), this._oBundle.getText(section)]);
+                    let value = "";
 
-                            ctrl.setValueState("Error");
-                            ctrl.setValueStateText(oEntry.title);
+                    if (ctrl.getValue) {
+                        value = ctrl.getValue();
+                    }
 
-                            oData.messages.push(oEntry);
-                        } else if (ctrl.getValue() !== "" && propValue === "") {
-                            oEntry.type = "Error";
-                            oEntry.title = this._oBundle.getText("field_invalid", [this._oBundle.getText(fieldKey)]);
-                            oEntry.description = this._oBundle.getText("field_invalid_desc", [this._oBundle.getText(fieldKey), this._oBundle.getText(section)]);
+                    if (ctrl.getSelectedKey) {
+                        value = ctrl.getSelectedKey();
+                    }
 
-                            ctrl.setValueState("Error");
-                            ctrl.setValueStateText(oEntry.title);
+                    if (!value) {
+                        let oEntry = {
+                            type: "Error",
+                            title: "Mandatory field missing",
+                            description: `Please fill mandatory field in ${section}`
+                        };
 
-                            oData.messages.push(oEntry);
-                        } else {
-                            ctrl.setValueState("None");
-                            ctrl.setValueStateText();
-                        }
+                        ctrl.setValueState("Error");
+                        ctrl.setValueStateText(oEntry.title);
+                        oData.messages.push(oEntry);
+                    } else {
+                        ctrl.setValueState("None");
+                        ctrl.setValueStateText("");
+                    }
 
                     return oData;
                 },
@@ -376,28 +377,29 @@ sap.ui.define([
 
                 validateGLFrag: function () {
                     let oData = { messages: [] };
-                    let oModel = this.getView().getModel("GLRequestModel");
 
                     const aFields = [
-                        { id: "inpGLAccount", path: "/GLAccount", section: "Initial" },
-                        { id: "inpCompanyCode", path: "/CompanyCode", section: "Initial" },
-                        { id: "inpGLType", path: "/GLAccountType", section: "Type / Description" },
-                        { id: "inpAccGroup", path: "/AccountGroup", section: "Type / Description" }
+                        { id: "inpGLAccount", section: "Initial" },
+                        { id: "inpCompanyCode", section: "Initial" },
+                        { id: "inpGLType", section: "Type / Description" },
+                        { id: "inpAccGroup", section: "Type / Description" },
+                        { id: "inpCurrency", section: "Control Data" },
+                        { id: "inpTaxCategory", section: "Control Data" }
                     ];
 
                     aFields.forEach(f => {
                         let ctrl = this.byId(f.id);
-                        let val = oModel.getProperty(f.path);
-                        this.validateInputSuggestionField(oData, f.section, ctrl, val);
+                        this.validateInputSuggestionField(oData, f.section, ctrl);
                     });
 
                     this.getView().getModel("GLMessageModel").setData(oData);
 
                     if (oData.messages.length > 0) {
                         this.byId("bMsgRecEditService").setType("Reject");
+                        this.byId("mpServiceMessage").openBy(this.byId("bMsgRecEditService"));
                         return false;
                     }
-                    //this.byId("bMsgRecEditService").setType("Default");
+
                     return true;
                 },
 

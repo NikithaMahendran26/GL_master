@@ -164,11 +164,52 @@ this._mainView.setModel(this.getModel("approverModel"), "approverModel");
 
         sap.m.MessageToast.show("GL Account approved & created");
 
+        const oGlModel =
+    this._mainView?.getModel("glModel") ||
+    this.getModel("glModel");
+
+if (!oGlModel) {
+    sap.m.MessageBox.error("GL data not loaded yet");
+    return;
+}
+
+const oGL = oGlModel.getData()?.items?.[0];
+
+if (!oGL) {
+    sap.m.MessageBox.error("GL data is empty");
+    return;
+}
+
+
+        this._openSuccessDialog(oGL);
+
         this._completeWorkflowTask();
 
     } catch (e) {
         sap.m.MessageBox.error(e.message || "Approval failed");
     }
+},
+
+_openSuccessDialog: function (oGL) {
+    if (!this._successDialog) {
+        this._successDialog = sap.ui.core.Fragment.load({
+            name: "approvals.fragments.SuccessDialog",
+            controller: this
+        }).then(oDialog => {
+            this._mainView.addDependent(oDialog);
+            return oDialog;
+        });
+    }
+
+    this._successDialog.then(oDialog => {
+        const oModel = new sap.ui.model.json.JSONModel({
+            GLAccount: oGL.GLAccount,
+            CompanyCode: oGL.CompanyCode
+        });
+
+        oDialog.setModel(oModel, "successModel");
+        oDialog.open();
+    });
 },
 
 _postGLToSAP: function () {
@@ -200,7 +241,8 @@ _postGLToSAP: function () {
 
     const payload = {
       GLACCNO: oGL.GLAccount || "",
-      CHACCTS: oGL.ChartOfAccounts || "",
+      //CHACCTS: oGL.ChartOfAccounts || "",
+      CHACCTS:"INT",
       ACCGRP: oGL.AccountGroup || "",
       GLACCTYPE: oGL.GLAccountType || "",
       LANGUAGE: "EN",
@@ -212,8 +254,11 @@ _postGLToSAP: function () {
       HOUSEBK: oGL.HouseBank || "",
       BALINLCLCURR: oGL.LocalCurrencyOnly === true ? "X" : "",
       TAXCATEGORY: oGL.TaxCategory || "",
-      RECONACCT: oGL.ReconciliationAccount || "",
-      SORTKEY: oGL.SortKey || "",
+      //RECONACCT: oGL.ReconciliationAccount || "",
+      RECONACCT:"K",
+      //SORTKEY: oGL.SortKey || "",
+      SORTKEY: "012",
+      CONTROLLINGAREA: "NESC",
       PLACCT: oGL.PlanningAccount || "",
       BALSHEETINDI: oGL.BalanceSheetIndicator || "",
       TRADEPARTNO: oGL.TradingPartner || "",
@@ -259,6 +304,12 @@ _postGLToSAP: function () {
       }
     });
   });
+},
+
+
+
+onSuccessDialogClose: function (oEvent) {
+    oEvent.getSource().getParent().close();
 },
 
     _fetchWorkflowToken: async function () {
