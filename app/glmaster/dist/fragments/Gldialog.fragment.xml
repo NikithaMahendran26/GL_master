@@ -113,11 +113,13 @@
 
                                 <Label text="Short Text"/>
                                 <Input id="inpShortText"
+                                       required="true"
                                        value="{GLRequestModel>/ShortText}"/>
 
                                 <Label text="GL Account Long Text"/>
                                 <Input id="inpLongText"
-                                       value="{GLRequestModel>/LongText}"/>
+                                       required="true"
+                                       value="{GLRequestModel>/GLAccountLongText}"/>
                             </f:content>
                         </f:SimpleForm>
                     </IconTabFilter>

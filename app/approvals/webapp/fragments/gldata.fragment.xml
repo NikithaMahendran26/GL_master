@@ -77,8 +77,8 @@
                                        editable="{ui>/editable}"/>
 
                                 <Label text="Long Text"/>
-                                <Input value="{GLRequestModel>/GLAccountLongText}"
-                                       editable="{ui>/editable}"/>
+                                <Input value="{GLRequestModel>/GLAccountLongText}" 
+                                editable="{ui>/editable}"/>
                             </f:content>
                         </f:SimpleForm>
                     </IconTabFilter>

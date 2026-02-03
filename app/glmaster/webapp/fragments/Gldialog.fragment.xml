@@ -119,7 +119,7 @@
                                 <Label text="GL Account Long Text"/>
                                 <Input id="inpLongText"
                                        required="true"
-                                       value="{GLRequestModel>/LongText}"/>
+                                       value="{GLRequestModel>/GLAccountLongText}"/>
                             </f:content>
                         </f:SimpleForm>
                     </IconTabFilter>

@@ -140,7 +140,7 @@ sap.ui.define([
                         GLAccountType: "",
                         AccountGroup: "",
                         ShortText: "",
-                        LongText: "",
+                        GLAccountLongText: "",
                         AccountCurrency: "",
                         LocalCurrencyOnly: false,
                         TaxCategory: "",

@@ -140,7 +140,7 @@ sap.ui.define([
                         GLAccountType: "",
                         AccountGroup: "",
                         ShortText: "",
-                        LongText: "",
+                        GLAccountLongText: "",
                         AccountCurrency: "",
                         LocalCurrencyOnly: false,
                         TaxCategory: "",
@@ -342,66 +342,89 @@ sap.ui.define([
                 },
 
                 validateInputSuggestionField: function (oData, section, ctrl) {
-                    if (!ctrl || !ctrl.getRequired || !ctrl.getRequired()) {
-                        return oData;
-                    }
+    if (!ctrl || !ctrl.getRequired || !ctrl.getRequired()) {
+        return oData;
+    }
 
-                    let value = "";
+    let value = "";
 
-                    if (ctrl.getValue) {
-                        value = ctrl.getValue();
-                    }
+    if (ctrl.getValue) {
+        value = ctrl.getValue();
+    }
 
-                    if (ctrl.getSelectedKey) {
-                        value = ctrl.getSelectedKey();
-                    }
+    if (ctrl.getSelectedKey) {
+        value = ctrl.getSelectedKey();
+    }
 
-                    if (!value) {
-                        let oEntry = {
-                            type: "Error",
-                            title: "Mandatory field missing",
-                            description: `Please fill mandatory field in ${section}`
-                        };
+    if (!value) {
+        let oEntry = {
+            type: "Error",
+            title: "Mandatory field missing",
+            description: `Please fill mandatory field in ${section}`
+        };
 
-                        ctrl.setValueState("Error");
-                        ctrl.setValueStateText(oEntry.title);
-                        oData.messages.push(oEntry);
-                    } else {
-                        ctrl.setValueState("None");
-                        ctrl.setValueStateText("");
-                    }
+        ctrl.setValueState(sap.ui.core.ValueState.Error);
+        ctrl.setValueStateText("This field is mandatory");
 
-                    return oData;
-                },
+        oData.messages.push(oEntry);
+    } else {
+        ctrl.setValueState(sap.ui.core.ValueState.None);
+        ctrl.setValueStateText("");
+    }
+
+    return oData;
+},
 
 
                 validateGLFrag: function () {
-                    let oData = { messages: [] };
+    let oData = { messages: [] };
 
-                    const aFields = [
-                        { id: "inpGLAccount", section: "Initial" },
-                        { id: "inpCompanyCode", section: "Initial" },
-                        { id: "inpGLType", section: "Type / Description" },
-                        { id: "inpAccGroup", section: "Type / Description" },
-                        { id: "inpCurrency", section: "Control Data" },
-                        { id: "inpTaxCategory", section: "Control Data" }
-                    ];
+    // 🔁 Clear previous messages
+    this.getView().getModel("GLMessageModel").setData({ messages: [] });
 
-                    aFields.forEach(f => {
-                        let ctrl = this.byId(f.id);
-                        this.validateInputSuggestionField(oData, f.section, ctrl);
-                    });
+    const aFields = [
+        { id: "inpGLAccount", section: "Initial" },
+        { id: "inpCompanyCode", section: "Initial" },
 
-                    this.getView().getModel("GLMessageModel").setData(oData);
+        { id: "inpGLType", section: "Type / Description" },
+        { id: "inpAccGroup", section: "Type / Description" },
+        { id: "inpShortText", section: "Type / Description" },
+        { id: "inpLongText", section: "Type / Description" },
 
-                    if (oData.messages.length > 0) {
-                        this.byId("bMsgRecEditService").setType("Reject");
-                        this.byId("mpServiceMessage").openBy(this.byId("bMsgRecEditService"));
-                        return false;
-                    }
+        { id: "inpCurrency", section: "Control Data" },
+        { id: "inpTaxCategory", section: "Control Data" },
 
-                    return true;
-                },
+        { id: "inpFieldStatus", section: "Create / Bank / Interest" }
+    ];
+
+    aFields.forEach(f => {
+        let ctrl = sap.ui.getCore().byId(
+    this.getView().getId() + "--" + f.id
+);
+
+        this.validateInputSuggestionField(oData, f.section, ctrl);
+    });
+
+   
+    if (oData.messages.length > 0) {
+        this.getView().getModel("GLMessageModel").setData(oData);
+
+        this.byId("bMsgRecEditService").setType("Reject");
+
+        return false;
+    }
+
+    return true;
+},
+
+handleServiceMessagePopoverPress: function (oEvent) {
+    const oSource = oEvent.getSource();
+    const oPopover = oSource.getDependents()[0];
+
+    if (oPopover) {
+        oPopover.openBy(oSource);
+    }
+},
 
 
                 submitsrv: function () {
