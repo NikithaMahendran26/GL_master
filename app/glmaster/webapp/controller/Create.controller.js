@@ -287,6 +287,7 @@ sap.ui.define([
                 openGLDialog: function (mode) {
                     if (!this._oGLDialog) {
                         this._oGLDialog = Fragment.load({
+                            id: this.getView().getId(),
                             name: "glmaster.fragments.Gldialog",
                             controller: this
                         });
@@ -341,90 +342,92 @@ sap.ui.define([
                     this._oGLDialog.then(oDialog => oDialog.close());
                 },
 
-                validateInputSuggestionField: function (oData, section, ctrl) {
-    if (!ctrl || !ctrl.getRequired || !ctrl.getRequired()) {
-        return oData;
-    }
+                validateInputSuggestionField: function (oData, section, ctrl, fieldLabel) {
 
-    let value = "";
+                    if (!ctrl || !ctrl.getRequired || !ctrl.getRequired()) {
+                        return oData;
+                    }
 
-    if (ctrl.getValue) {
-        value = ctrl.getValue();
-    }
+                    let value = "";
 
-    if (ctrl.getSelectedKey) {
-        value = ctrl.getSelectedKey();
-    }
+                    if (ctrl.isA("sap.m.Input")) {
+                        value = ctrl.getValue()?.trim();
+                    }
+                    else if (ctrl.isA("sap.m.Select")) {
+                        value = ctrl.getSelectedKey();
+                    }
 
-    if (!value) {
-        let oEntry = {
-            type: "Error",
-            title: "Mandatory field missing",
-            description: `Please fill mandatory field in ${section}`
-        };
+                    if (!value) {
 
-        ctrl.setValueState(sap.ui.core.ValueState.Error);
-        ctrl.setValueStateText("This field is mandatory");
+                        let oEntry = {
+                            type: "Error",
+                            title: fieldLabel + " is mandatory",
+                            description: `Please fill the field "${fieldLabel}" in section "${section}"`
+                        };
 
-        oData.messages.push(oEntry);
-    } else {
-        ctrl.setValueState(sap.ui.core.ValueState.None);
-        ctrl.setValueStateText("");
-    }
+                        ctrl.setValueState(sap.ui.core.ValueState.Error);
+                        ctrl.setValueStateText(fieldLabel + " is mandatory");
 
-    return oData;
-},
+                        oData.messages.push(oEntry);
+
+                    } else {
+                        ctrl.setValueState(sap.ui.core.ValueState.None);
+                        ctrl.setValueStateText("");
+                    }
+
+                    return oData;
+                },
 
 
                 validateGLFrag: function () {
-    let oData = { messages: [] };
+                    let oData = { messages: [] };
 
-    // 🔁 Clear previous messages
-    this.getView().getModel("GLMessageModel").setData({ messages: [] });
+                    // 🔁 Clear previous messages
+                    this.getView().getModel("GLMessageModel").setData({ messages: [] });
 
-    const aFields = [
-        { id: "inpGLAccount", section: "Initial" },
-        { id: "inpCompanyCode", section: "Initial" },
+                    const aFields = [
+                        { id: "inpGLAccount", section: "Initial", label: "GL Account" },
+                        { id: "inpCompanyCode", section: "Initial", label: "Company Code" },
 
-        { id: "inpGLType", section: "Type / Description" },
-        { id: "inpAccGroup", section: "Type / Description" },
-        { id: "inpShortText", section: "Type / Description" },
-        { id: "inpLongText", section: "Type / Description" },
+                        { id: "inpGLType", section: "Type / Description", label: "GL Account Type" },
+                        { id: "inpAccGroup", section: "Type / Description", label: "Account Group" },
+                        { id: "inpShortText", section: "Type / Description", label: "Short Text" },
+                        { id: "inpLongText", section: "Type / Description", label: "GL Account Long Text" },
 
-        { id: "inpCurrency", section: "Control Data" },
-        { id: "inpTaxCategory", section: "Control Data" },
+                        { id: "inpCurrency", section: "Control Data", label: "Account Currency" },
+                        { id: "inpTaxCategory", section: "Control Data", label: "Tax Category" },
 
-        { id: "inpFieldStatus", section: "Create / Bank / Interest" }
-    ];
+                        { id: "inpFieldStatus", section: "Create / Bank / Interest", label: "Field Status Group" }
+                    ];
 
-    aFields.forEach(f => {
-        let ctrl = sap.ui.getCore().byId(
-    this.getView().getId() + "--" + f.id
-);
+                    aFields.forEach(f => {
+                        let ctrl = sap.ui.getCore().byId(
+                            this.getView().getId() + "--" + f.id
+                        );
 
-        this.validateInputSuggestionField(oData, f.section, ctrl);
-    });
+                        this.validateInputSuggestionField(oData, f.section, ctrl, f.label);
+                    });
 
-   
-    if (oData.messages.length > 0) {
-        this.getView().getModel("GLMessageModel").setData(oData);
 
-        this.byId("bMsgRecEditService").setType("Reject");
+                    if (oData.messages.length > 0) {
+                        this.getView().getModel("GLMessageModel").setData(oData);
 
-        return false;
-    }
+                        this.byId("bMsgRecEditService").setType("Reject");
 
-    return true;
-},
+                        return false;
+                    }
 
-handleServiceMessagePopoverPress: function (oEvent) {
-    const oSource = oEvent.getSource();
-    const oPopover = oSource.getDependents()[0];
+                    return true;
+                },
 
-    if (oPopover) {
-        oPopover.openBy(oSource);
-    }
-},
+                handleServiceMessagePopoverPress: function (oEvent) {
+                    const oSource = oEvent.getSource();
+                    const oPopover = oSource.getDependents()[0];
+
+                    if (oPopover) {
+                        oPopover.openBy(oSource);
+                    }
+                },
 
 
                 submitsrv: function () {
