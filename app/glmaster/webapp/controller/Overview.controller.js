@@ -53,6 +53,10 @@ sap.ui.define([
             this.getOwnerComponent().getRouter().navTo(view);
         },
 
+        onDisplay: function () {
+            this.getOwnerComponent().getRouter().navTo("Change");
+        },
+
         onCreate: function () {
             this.navTo("Create");
         }

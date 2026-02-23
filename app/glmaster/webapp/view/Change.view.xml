@@ -1,0 +1,125 @@
+<mvc:View
+    controllerName="glmaster.controller.Change"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:fb="sap.ui.comp.filterbar"
+    xmlns:core="sap.ui.core">
+
+    <f:DynamicPage>
+
+        <!-- ================= TITLE ================= -->
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <Title text="GL Account - Change" />
+                </f:heading>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <!-- ================= FILTER BAR ================= -->
+        <f:header>
+            <f:DynamicPageHeader>
+
+                <fb:FilterBar
+                    id="changeFilterBar"
+                    search="onSearch"
+                    showGoOnFB="true"
+                    showClearOnFB="true">
+
+                    <fb:filterGroupItems>
+
+                        <!-- GL Account -->
+                        <fb:FilterGroupItem
+                            groupName="__basic"
+                            name="GlAccount"
+                            label="GL Account"
+                            visibleInFilterBar="true">
+
+                            <fb:control>
+                                <Input id="idGLAccount" />
+                            </fb:control>
+
+                        </fb:FilterGroupItem>
+
+                        <!-- Company Code -->
+                        <fb:FilterGroupItem
+                            groupName="__basic"
+                            name="CompanyCode"
+                            label="Company Code"
+                            visibleInFilterBar="true">
+
+                            <fb:control>
+                                <Input id="idCompanyCode" />
+                            </fb:control>
+
+                        </fb:FilterGroupItem>
+
+                        <!-- Created By -->
+                        <fb:FilterGroupItem
+                            groupName="__basic"
+                            name="CreatedBy"
+                            label="Created By"
+                            visibleInFilterBar="true">
+
+                            <fb:control>
+                                <Input id="idCreatedBy" />
+                            </fb:control>
+
+                        </fb:FilterGroupItem>
+
+                    </fb:filterGroupItems>
+
+                </fb:FilterBar>
+
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <!-- ================= TABLE ================= -->
+        <f:content>
+
+            <Table
+                id="glDetailsTable"
+                items="{
+                    path: 'glDetailsModel>/ZI_DDGLDETAILS'
+                }"
+                growing="true"
+                growingThreshold="20">
+
+                <columns>
+                    <Column>
+                        <Text text="GL Account" />
+                    </Column>
+
+                    <Column>
+                        <Text text="Company Code" />
+                    </Column>
+
+                    <Column>
+                        <Text text="Description" />
+                    </Column>
+
+                    <Column>
+                        <Text text="Created By" />
+                    </Column>
+                </columns>
+
+                <items>
+    <ColumnListItem>
+        <cells>
+            <Text text="{glDetailsModel>GLAccount}" />
+            <Text text="{glDetailsModel>CompanyCode}" />
+            <Text text="{glDetailsModel>ShortText}" />
+            <Text text="{glDetailsModel>NameofPersonwhoCreatedObject}" />
+        </cells>
+    </ColumnListItem>
+</items>
+
+
+            </Table>
+
+        </f:content>
+
+    </f:DynamicPage>
+
+</mvc:View>
