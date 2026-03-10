@@ -8,35 +8,65 @@ sap.ui.define([
     return Controller.extend("glmaster.controller.Change", {
 
         onInit: function () {
-            var oModel = this.getOwnerComponent().getModel("glDetailsModel");
-            this.getView().setModel(oModel, "glDetailsModel");
-        },
 
+    var oModel = this.getOwnerComponent().getModel("glDetailsModel");
+    this.getView().setModel(oModel, "glDetailsModel");
+
+    const oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+
+    oRouter.getRoute("Change")
+        .attachPatternMatched(this._onRouteMatched, this);
+},
+
+_onRouteMatched: function () {
+
+    var oTable = this.byId("glDetailsTable");
+    var oBinding = oTable.getBinding("items");
+
+    if (oBinding) {
+
+        var aFilters = [];
+
+        
+        aFilters.push(new Filter("ChartOfAccounts", FilterOperator.EQ, "INT"));
+
+        oBinding.filter(aFilters);
+
+    }
+
+
+},
         onSearch: function () {
 
-            var aFilters = [];
+    var aFilters = [];
 
-            var sGL = this.byId("idGLAccount").getValue();
-            var sCompany = this.byId("idCompanyCode").getValue();
-            var sCreatedBy = this.byId("idCreatedBy").getValue();
+    // mandatory filter
+    aFilters.push(new Filter("ChartOfAccounts", FilterOperator.EQ, "INT"));
 
-            if (sGL) {
-                aFilters.push(new Filter("GLAccount", FilterOperator.Contains, sGL));
-            }
+    var sGL = this.byId("idGLAccount").getValue();
+    var sCompany = this.byId("idCompanyCode").getValue();
+    var sCreatedBy = this.byId("idCreatedBy").getValue();
 
-            if (sCompany) {
-                aFilters.push(new Filter("CompanyCode", FilterOperator.Contains, sCompany));
-            }
+    if (sGL) {
+        aFilters.push(new Filter("GLAccount", FilterOperator.Contains, sGL));
+    }
 
-            if (sCreatedBy) {
-                aFilters.push(new Filter("NameofPersonwhoCreatedObject", FilterOperator.Contains, sCreatedBy));
-            }
+    if (sCompany) {
+        aFilters.push(new Filter("CompanyCode", FilterOperator.Contains, sCompany));
+    }
 
-            var oTable = this.byId("glDetailsTable");
-            var oBinding = oTable.getBinding("items");
+    if (sCreatedBy) {
+        aFilters.push(new Filter("NameofPersonwhoCreatedObject", FilterOperator.Contains, sCreatedBy));
+    }
 
-            oBinding.filter(aFilters);
-        }
+    var oTable = this.byId("glDetailsTable");
+    var oBinding = oTable.getBinding("items");
+
+    if (oBinding) {
+        oBinding.filter(aFilters);
+    }
+
+}
 
 
     });

@@ -8,7 +8,6 @@
 
     <f:DynamicPage>
 
-        <!-- ================= TITLE ================= -->
         <f:title>
             <f:DynamicPageTitle>
                 <f:heading>
@@ -17,7 +16,7 @@
             </f:DynamicPageTitle>
         </f:title>
 
-        <!-- ================= FILTER BAR ================= -->
+   
         <f:header>
             <f:DynamicPageHeader>
 
@@ -29,7 +28,7 @@
 
                     <fb:filterGroupItems>
 
-                        <!-- GL Account -->
+                     
                         <fb:FilterGroupItem
                             groupName="__basic"
                             name="GlAccount"
@@ -42,7 +41,6 @@
 
                         </fb:FilterGroupItem>
 
-                        <!-- Company Code -->
                         <fb:FilterGroupItem
                             groupName="__basic"
                             name="CompanyCode"
@@ -55,7 +53,6 @@
 
                         </fb:FilterGroupItem>
 
-                        <!-- Created By -->
                         <fb:FilterGroupItem
                             groupName="__basic"
                             name="CreatedBy"
@@ -75,16 +72,22 @@
             </f:DynamicPageHeader>
         </f:header>
 
-        <!-- ================= TABLE ================= -->
         <f:content>
 
             <Table
-                id="glDetailsTable"
-                items="{
-                    path: 'glDetailsModel>/ZI_DDGLDETAILS'
-                }"
-                growing="true"
-                growingThreshold="20">
+    id="glDetailsTable"
+    growing="true"
+    growingThreshold="20"
+    items="{
+        path:'glDetailsModel>/ZI_DDGLDETAILS',
+        sorter:{
+            path:'DateRecordWasCreated',
+            descending:true
+        }
+    }">
+
+
+
 
                 <columns>
                     <Column>
